@@ -1,0 +1,14 @@
+conduit_ID,start_node_ID,end_node_ID,loop_ID,schedule,length,nominal_diameter,volume_flow_rate,zeta,fixed_pressure_difference
+P1,S0,S1,L1,copper,4,35,0.458,0.007096,
+P2,S1,S2,L2,copper,2,28,0.397,-0.011416,
+P3,S2,S3,L3,copper,2,22,0.214,-0.037437,
+P4,S3,S4,L4,copper,2,18,0.122,0.096462,
+P5,S1,R1,"(L1, L2)",pex,25,18,0.061,434.804239,
+P6,S2,R2,"(L2, L3)",pex,25,26,0.183,186.696474,
+P7,S3,R3,"(L3, L4) ",pex,15,20,0.092,315.569585,
+P8,S4,R4,L4,pex,20,20,0.122,154.280699,
+P9,R4,R3,L4,copper,2,18,0.122,0.084951,
+P10,R3,R2,L3,copper,2,22,0.214,0.514415,
+P11,R2,R1,L2,copper,2,28,0.397,0.543084,
+P12,R1,R0,L1,copper,4,35,0.458,0.262696,
+P13,R0,S0,L1,,,,,,-39
