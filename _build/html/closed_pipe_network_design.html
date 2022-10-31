@@ -1,0 +1,3155 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Design of a Hydronic Pipe Network &#8212; Pipe and Duct Flow Calculations with Python</title>
+    
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+<link href="_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+
+    
+  <link rel="stylesheet"
+    href="_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" href="_static/styles/sphinx-book-theme.css?digest=5115cc725059bd94278eecd172e13a965bf8f5a9" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="_static/design-style.b7bb847fb20b106c3d81b95245e65545.min.css" />
+    
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/clipboard.min.js"></script>
+    <script src="_static/copybutton.js"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?digest=9c920249402e914e316237a7dbc6769907cce411"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
+    <script src="_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="_static/sphinx-thebe.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Analysis of the Hydronic Network" href="closed_pipe_network_analysis.html" />
+    <link rel="prev" title="Air Flow through a Duct" href="single_duct.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="None">
+    
+
+    <!-- Google Analytics -->
+    
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
+<!-- Checkboxes to toggle the left sidebar -->
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle navigation sidebar">
+<label class="overlay overlay-navbar" for="__navigation">
+    <div class="visually-hidden">Toggle navigation sidebar</div>
+</label>
+<!-- Checkboxes to toggle the in-page toc -->
+<input type="checkbox" class="sidebar-toggle" name="__page-toc" id="__page-toc" aria-label="Toggle in-page Table of Contents">
+<label class="overlay overlay-pagetoc" for="__page-toc">
+    <div class="visually-hidden">Toggle in-page Table of Contents</div>
+</label>
+<!-- Headers at the top -->
+<div class="announcement header-item noprint"></div>
+<div class="header header-item noprint"></div>
+
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<!-- Sidebar -->
+<div class="bd-sidebar noprint" id="site-navigation">
+    <div class="bd-sidebar__content">
+        <div class="bd-sidebar__top"><div class="navbar-brand-box">
+    <a class="navbar-brand text-wrap" href="index.html">
+      
+        <!-- `logo` is deprecated in Sphinx 4.0, so remove this when we stop supporting 3 -->
+        
+      
+      
+      <img src="_static/logo.png" class="logo" alt="logo">
+      
+      
+      <h1 class="site-logo" id="site-title">Pipe and Duct Flow Calculations with Python</h1>
+      
+    </a>
+</div><form class="bd-search d-flex align-items-center" action="search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search this book..." aria-label="Search this book..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="intro.html">
+                    Pipe and Duct Flow Calculations with Python
+                </a>
+            </li>
+        </ul>
+        <ul class="current nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="single_duct.html">
+   Air Flow through a Duct
+  </a>
+ </li>
+ <li class="toctree-l1 current active">
+  <a class="current reference internal" href="#">
+   Design of a Hydronic Pipe Network
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="closed_pipe_network_analysis.html">
+   Analysis of the Hydronic Network
+  </a>
+ </li>
+</ul>
+
+    </div>
+</nav></div>
+        <div class="bd-sidebar__bottom">
+             <!-- To handle the deprecated key -->
+            
+            <div class="navbar_extra_footer">
+            Powered by <a href="https://jupyterbook.org">Jupyter Book</a>
+            </div>
+            
+        </div>
+    </div>
+    <div id="rtd-footer-container"></div>
+</div>
+
+
+          
+
+
+          
+<!-- A tiny helper pixel to detect if we've scrolled -->
+<div class="sbt-scroll-pixel-helper"></div>
+<!-- Main content -->
+<div class="col py-0 content-container">
+    
+    <div class="header-article row sticky-top noprint">
+        
+
+
+
+<div class="col py-1 d-flex header-article-main">
+    <div class="header-article__left">
+        
+        <label for="__navigation"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="right"
+title="Toggle navigation"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-bars"></i>
+  </span>
+
+</label>
+
+        
+    </div>
+    <div class="header-article__right">
+<div class="menu-dropdown menu-dropdown-launch-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Launch interactive content">
+      <i class="fas fa-rocket"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="https://mybinder.org/v2/gh/TomLXXVI/jbFluidFlow/master?urlpath=tree/closed_pipe_network_design.ipynb"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Launch on Binder"
+>
+  
+
+<span class="headerbtn__icon-container">
+  
+    <img src="_static/images/logo_binder.svg">
+  </span>
+<span class="headerbtn__text-container">Binder</span>
+</a>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+
+<button onclick="toggleFullScreen()"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="bottom"
+title="Fullscreen mode"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+<div class="menu-dropdown menu-dropdown-repository-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Source repositories">
+      <i class="fab fa-github"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="https://github.com/TomLXXVI/jbFluidFlow"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Source repository"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="headerbtn__text-container">repository</span>
+</a>
+
+      </li>
+      
+      <li>
+        <a href="https://github.com/TomLXXVI/jbFluidFlow/issues/new?title=Issue%20on%20page%20%2Fclosed_pipe_network_design.html&body=Your%20issue%20content%20here."
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Open an issue"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="headerbtn__text-container">open issue</span>
+</a>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+
+<div class="menu-dropdown menu-dropdown-download-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Download this page">
+      <i class="fas fa-download"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="_sources/closed_pipe_network_design.ipynb"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Download source file"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="headerbtn__text-container">.ipynb</span>
+</a>
+
+      </li>
+      
+      <li>
+        
+<button onclick="printPdf(this)"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="left"
+title="Print to PDF"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="headerbtn__text-container">.pdf</span>
+</button>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+<label for="__page-toc"
+  class="headerbtn headerbtn-page-toc"
+  
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-list"></i>
+  </span>
+
+</label>
+
+    </div>
+</div>
+
+<!-- Table of contents -->
+<div class="col-md-3 bd-toc show noprint">
+    <div class="tocsection onthispage pt-5 pb-3">
+        <i class="fas fa-list"></i> Contents
+    </div>
+    <nav id="bd-toc-nav" aria-label="Page">
+        <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#let-s-import-what-we-ll-need">
+   Let’s Import What We’ll Need
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#hydronic-network-scheme">
+   Hydronic Network Scheme
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#define-the-fluid-in-the-pipe-network">
+   Define the Fluid in the Pipe Network
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#configuration-of-the-pipe-network">
+   Configuration of the Pipe Network
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#sizing-the-pipes-in-the-network">
+   Sizing the Pipes in the Network
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#loading-the-pipe-schedules">
+     Loading the Pipe Schedules
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#creating-the-closed-pipe-network">
+     Creating the Closed Pipe Network
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#setting-units">
+     Setting Units
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#load-the-pipe-network-configuration-file-into-the-pipenetwork-instance">
+     Load the Pipe Network Configuration File into the
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       PipeNetwork
+      </span>
+     </code>
+     Instance
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#add-fittings-to-the-pipe-network">
+   Add Fittings to the Pipe Network
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#tees">
+     Tees
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#reducers-and-enlargers">
+     Reducers and Enlargers
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#elbows">
+     Elbows
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#pipes-fittings-and-flow-paths-overview">
+   Pipes, Fittings and Flow Paths Overview
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#pipes">
+     Pipes
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#fittings">
+     Fittings
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#flow-paths">
+     Flow Paths
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#add-balancing-valves-to-the-cross-overs-in-the-network">
+   Add Balancing Valves to the Cross-Overs in the Network
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#calculate-preliminary-flow-coefficients">
+     Calculate Preliminary Flow Coefficients
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#balancing-valve-selection">
+     Balancing Valve Selection
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#add-control-valves-to-the-cross-overs">
+   Add Control Valves to the Cross-Overs
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#id1">
+     Calculate Preliminary Flow Coefficients
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#control-valve-selection">
+     Control Valve Selection
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#pipes-fittings-and-flow-paths-overview-bis">
+   Pipes, Fittings and Flow Paths Overview (bis)
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#id2">
+     Pipes
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#fittings-and-valves">
+     Fittings and Valves
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#id3">
+     Flow Paths
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#statically-balance-the-network-for-design-volume-flow-rates">
+   Statically Balance the Network for Design Volume Flow Rates
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#pipes-fittings-and-flow-paths-overview-ter">
+   Pipes, Fittings and Flow Paths Overview (ter)
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#id4">
+     Pipes
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#id5">
+     Fittings and Valves
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#id6">
+     Flow Paths
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#checking-control-valve-authorities">
+   Checking Control Valve Authorities
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#drawing-the-system-curve-of-the-network">
+   Drawing the System Curve of the Network
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#save-the-pipe-network-for-later">
+   Save the Pipe Network for Later
+  </a>
+ </li>
+</ul>
+
+    </nav>
+</div>
+    </div>
+    <div class="article row">
+        <div class="col pl-md-3 pl-lg-5 content-container">
+            <!-- Table of contents that is only displayed when printing the page -->
+            <div id="jb-print-docs-body" class="onlyprint">
+                <h1>Design of a Hydronic Pipe Network</h1>
+                <!-- Table of contents -->
+                <div id="print-main-content">
+                    <div id="jb-print-toc">
+                        
+                        <div>
+                            <h2> Contents </h2>
+                        </div>
+                        <nav aria-label="Page">
+                            <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#let-s-import-what-we-ll-need">
+   Let’s Import What We’ll Need
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#hydronic-network-scheme">
+   Hydronic Network Scheme
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#define-the-fluid-in-the-pipe-network">
+   Define the Fluid in the Pipe Network
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#configuration-of-the-pipe-network">
+   Configuration of the Pipe Network
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#sizing-the-pipes-in-the-network">
+   Sizing the Pipes in the Network
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#loading-the-pipe-schedules">
+     Loading the Pipe Schedules
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#creating-the-closed-pipe-network">
+     Creating the Closed Pipe Network
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#setting-units">
+     Setting Units
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#load-the-pipe-network-configuration-file-into-the-pipenetwork-instance">
+     Load the Pipe Network Configuration File into the
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       PipeNetwork
+      </span>
+     </code>
+     Instance
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#add-fittings-to-the-pipe-network">
+   Add Fittings to the Pipe Network
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#tees">
+     Tees
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#reducers-and-enlargers">
+     Reducers and Enlargers
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#elbows">
+     Elbows
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#pipes-fittings-and-flow-paths-overview">
+   Pipes, Fittings and Flow Paths Overview
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#pipes">
+     Pipes
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#fittings">
+     Fittings
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#flow-paths">
+     Flow Paths
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#add-balancing-valves-to-the-cross-overs-in-the-network">
+   Add Balancing Valves to the Cross-Overs in the Network
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#calculate-preliminary-flow-coefficients">
+     Calculate Preliminary Flow Coefficients
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#balancing-valve-selection">
+     Balancing Valve Selection
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#add-control-valves-to-the-cross-overs">
+   Add Control Valves to the Cross-Overs
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#id1">
+     Calculate Preliminary Flow Coefficients
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#control-valve-selection">
+     Control Valve Selection
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#pipes-fittings-and-flow-paths-overview-bis">
+   Pipes, Fittings and Flow Paths Overview (bis)
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#id2">
+     Pipes
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#fittings-and-valves">
+     Fittings and Valves
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#id3">
+     Flow Paths
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#statically-balance-the-network-for-design-volume-flow-rates">
+   Statically Balance the Network for Design Volume Flow Rates
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#pipes-fittings-and-flow-paths-overview-ter">
+   Pipes, Fittings and Flow Paths Overview (ter)
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#id4">
+     Pipes
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#id5">
+     Fittings and Valves
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#id6">
+     Flow Paths
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#checking-control-valve-authorities">
+   Checking Control Valve Authorities
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#drawing-the-system-curve-of-the-network">
+   Drawing the System Curve of the Network
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#save-the-pipe-network-for-later">
+   Save the Pipe Network for Later
+  </a>
+ </li>
+</ul>
+
+                        </nav>
+                    </div>
+                </div>
+            </div>
+            <main id="main-content" role="main">
+                
+              <div>
+                
+  <section class="tex2jax_ignore mathjax_ignore" id="design-of-a-hydronic-pipe-network">
+<h1>Design of a Hydronic Pipe Network<a class="headerlink" href="#design-of-a-hydronic-pipe-network" title="Permalink to this headline">#</a></h1>
+<hr class="docutils" />
+<p>This notebook demonstrates how a hydronic distribution system for heating can be designed with the <code class="docutils literal notranslate"><span class="pre">hvac.fluid_flow</span></code> package.</p>
+<section id="let-s-import-what-we-ll-need">
+<h2>Let’s Import What We’ll Need<a class="headerlink" href="#let-s-import-what-we-ll-need" title="Permalink to this headline">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">hvac</span> <span class="kn">import</span> <span class="n">Quantity</span>
+<span class="kn">from</span> <span class="nn">hvac.fluid_flow</span> <span class="kn">import</span> <span class="n">PipeNetwork</span><span class="p">,</span> <span class="n">PipeScheduleFactory</span>
+<span class="kn">from</span> <span class="nn">hvac.fluids</span> <span class="kn">import</span> <span class="n">Fluid</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">Q_</span> <span class="o">=</span> <span class="n">Quantity</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="hydronic-network-scheme">
+<h2>Hydronic Network Scheme<a class="headerlink" href="#hydronic-network-scheme" title="Permalink to this headline">#</a></h2>
+<p><img alt="scheme" src="_images/hydronic_network.png" /></p>
+</section>
+<section id="define-the-fluid-in-the-pipe-network">
+<h2>Define the Fluid in the Pipe Network<a class="headerlink" href="#define-the-fluid-in-the-pipe-network" title="Permalink to this headline">#</a></h2>
+<p>In a hydronic heating system water is being used as the heat carrier to transport heat from the heat generator(s) to the heat emitters.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">Water</span> <span class="o">=</span> <span class="n">Fluid</span><span class="p">(</span><span class="s1">&#39;Water&#39;</span><span class="p">)</span>
+<span class="n">heating_water</span> <span class="o">=</span> <span class="n">Water</span><span class="p">(</span><span class="n">T</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mi">50</span><span class="p">,</span> <span class="s1">&#39;degC&#39;</span><span class="p">),</span> <span class="n">P</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;bar&#39;</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="configuration-of-the-pipe-network">
+<h2>Configuration of the Pipe Network<a class="headerlink" href="#configuration-of-the-pipe-network" title="Permalink to this headline">#</a></h2>
+<p>The configuration of a fluid flow network can be done in a spreadsheet program, like Excel or OpenOffice Calc. Each row of the spreadsheet table represents a pipe in the network. The interconnection of pipes in the network happens with nodes. Each pipe has a start node and an end node, as shown by the dots in the network scheme above. The nodes allow the program to find out how the pipes in the network are interconnected. The first row of the spreadsheet table is the header. The header labels cannot be chosen freely; they must be known by the program. In the code block below the spreedsheet table for this example is displayed to show you how the table looks like in the spreadsheet program:</p>
+<div class="cell tag_hide-input docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+<span class="n">table</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;./networks/ex1_closed-pipe-network-design.csv&#39;</span><span class="p">)</span>
+<span class="n">ja</span><span class="o">.</span><span class="n">display_table</span><span class="p">(</span><span class="n">table</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div class="my_table"><table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>conduit_ID</th>
+      <th>start_node_ID</th>
+      <th>end_node_ID</th>
+      <th>loop_ID</th>
+      <th>schedule</th>
+      <th>length</th>
+      <th>volume_flow_rate</th>
+      <th>specific_pressure_drop</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>P1</td>
+      <td>S0</td>
+      <td>S1</td>
+      <td>L1</td>
+      <td>copper</td>
+      <td>4</td>
+      <td>0.458</td>
+      <td>0.2</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>P2</td>
+      <td>S1</td>
+      <td>S2</td>
+      <td>L2</td>
+      <td>copper</td>
+      <td>2</td>
+      <td>0.397</td>
+      <td>0.2</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>P3</td>
+      <td>S2</td>
+      <td>S3</td>
+      <td>L3</td>
+      <td>copper</td>
+      <td>2</td>
+      <td>0.214</td>
+      <td>0.2</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>P4</td>
+      <td>S3</td>
+      <td>S4</td>
+      <td>L4</td>
+      <td>copper</td>
+      <td>2</td>
+      <td>0.122</td>
+      <td>0.2</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>P5</td>
+      <td>S1</td>
+      <td>R1</td>
+      <td>(L1, L2)</td>
+      <td>pex</td>
+      <td>25</td>
+      <td>0.061</td>
+      <td>0.2</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>P6</td>
+      <td>S2</td>
+      <td>R2</td>
+      <td>(L2, L3)</td>
+      <td>pex</td>
+      <td>25</td>
+      <td>0.183</td>
+      <td>0.2</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>P7</td>
+      <td>S3</td>
+      <td>R3</td>
+      <td>(L3, L4)</td>
+      <td>pex</td>
+      <td>15</td>
+      <td>0.092</td>
+      <td>0.2</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>P8</td>
+      <td>S4</td>
+      <td>R4</td>
+      <td>L4</td>
+      <td>pex</td>
+      <td>20</td>
+      <td>0.122</td>
+      <td>0.2</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>P9</td>
+      <td>R4</td>
+      <td>R3</td>
+      <td>L4</td>
+      <td>copper</td>
+      <td>2</td>
+      <td>0.122</td>
+      <td>0.2</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>P10</td>
+      <td>R3</td>
+      <td>R2</td>
+      <td>L3</td>
+      <td>copper</td>
+      <td>2</td>
+      <td>0.214</td>
+      <td>0.2</td>
+    </tr>
+    <tr>
+      <th>10</th>
+      <td>P11</td>
+      <td>R2</td>
+      <td>R1</td>
+      <td>L2</td>
+      <td>copper</td>
+      <td>2</td>
+      <td>0.397</td>
+      <td>0.2</td>
+    </tr>
+    <tr>
+      <th>11</th>
+      <td>P12</td>
+      <td>R1</td>
+      <td>R0</td>
+      <td>L1</td>
+      <td>copper</td>
+      <td>4</td>
+      <td>0.458</td>
+      <td>0.2</td>
+    </tr>
+  </tbody>
+</table></div></div></div>
+</div>
+<p>This table is used to design a pipe network. When designing a pipe network the length and the design volume flow rate of each pipe are already known. A reasonble specific pressure drop needs to be chosen for each pipe. In this case a specific pressure drop of 0.2 kPa/m has been selected. Notice that there are no measuring units mentioned in the table. We can use any appropriate unit we want for a certain quantity, but later on we will have to tell the program what these units are. In the last column <em>schedule</em> a name has been entered that refers to a collection of commercially available pipe sizes. More explanation about this feature will follow, but first a worth about the header labels:</p>
+<ul class="simple">
+<li><p>The column <em>conduit_ID</em> contains a reference name or ID for each pipe in the network.</p></li>
+<li><p>The column <em>start_node_ID</em> specifies the ID of the pipe’s start node, i.e. the node where the fluid leaves.</p></li>
+<li><p>The column <em>end_node_ID</em> specifies the ID of the pipe’s end node, i.e. the node where the fluid arrives.</p></li>
+<li><p>The column <em>loop_ID</em> is not required, and thus optional, when designing a pipe network, but we will need this if we want to analyze our network later on with the Hardy Cross method. This will be explained in a subsequent notebook where we will analyze the behaviour of the network when control valves get more closed.</p></li>
+<li><p>The column <em>schedule</em> contains a reference name (that you can choose freely) to a collection of commercially available pipe sizes. When designing a network this column is optional. You can also assign only one schedule to the whole network, if all pipes in the network are of the same type. Or you could omit the schedule, but then you’ll get calculated, theoretical pipe diameters returned, which probably won’t be commercially available.</p></li>
+<li><p>The column <em>length</em> contains the length of each pipe (expressed in the unit you prefer)</p></li>
+<li><p>The column <em>volume_flow_rate</em> contains the design volume flow rate in each pipe (expressed in the unit you prefer)</p></li>
+<li><p>The column <em>specific_pressure_drop</em> contains the pressure drop per unit pipe length (expressed in the units you prefer)</p></li>
+</ul>
+<p>These header labels are needed when designing a pipe network. But there are more header labels defined in the program that can or will be needed when designing a duct network or when analyzing an existing pipe or duct network. These additional header labels will be discussed in subsequent notebooks.</p>
+<blockquote>
+<div><p><strong>IMPORTANT!</strong><br>
+When the table in the spreadsheet program is ready, you must save it as a comma-separated-values (csv) file, as this is the only file format that can be loaded by the program. Also be aware for the decimal point. It must be a point, not a comma! If the latter case is true, you can easily change this in the spreadsheet program, e.g. by selecting the table or the whole sheet and then changing the language formatting of the spreadsheet cells to any language format that uses a point to separate the decimals of a number before saving as a csv-file.</p>
+</div></blockquote>
+</section>
+<section id="sizing-the-pipes-in-the-network">
+<h2>Sizing the Pipes in the Network<a class="headerlink" href="#sizing-the-pipes-in-the-network" title="Permalink to this headline">#</a></h2>
+<section id="loading-the-pipe-schedules">
+<h3>Loading the Pipe Schedules<a class="headerlink" href="#loading-the-pipe-schedules" title="Permalink to this headline">#</a></h3>
+<p>As can be seen in the table above, we use two different reference names to reference two different collections of commercially available pipes, that are called “schedules”. As one could have guessed, “copper” refers to copper tubes, while “pex” refers to PEX-AL-PEX tubing.</p>
+<p>Any schedule you want can be used by the program. For this you need to make a “schedule table” in a spreadsheet program. The following code shows a fragment of the spreadsheet table for “copper”:</p>
+<div class="cell tag_hide-input docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">schedule_table</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span>
+    <span class="n">io</span><span class="o">=</span><span class="s2">&quot;./pipe-schedule-data/copper_tube.ods&quot;</span><span class="p">,</span>
+    <span class="n">sheet_name</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+    <span class="n">header</span><span class="o">=</span><span class="mi">0</span>
+<span class="p">)</span>
+<span class="n">ja</span><span class="o">.</span><span class="n">display_table</span><span class="p">(</span><span class="n">schedule_table</span><span class="o">.</span><span class="n">head</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div class="my_table"><table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>D_nom</th>
+      <th>D_ext</th>
+      <th>t</th>
+      <th>D_int</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>10.0</td>
+      <td>10.0</td>
+      <td>1.0</td>
+      <td>8.0</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>12.0</td>
+      <td>12.0</td>
+      <td>1.0</td>
+      <td>10.0</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>15.0</td>
+      <td>15.0</td>
+      <td>1.0</td>
+      <td>13.0</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>18.0</td>
+      <td>18.0</td>
+      <td>1.0</td>
+      <td>16.0</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>22.0</td>
+      <td>22.0</td>
+      <td>1.0</td>
+      <td>20.0</td>
+    </tr>
+  </tbody>
+</table></div></div></div>
+</div>
+<p>As you can see, the header of the spreadsheet table must have these 4 labels:</p>
+<ul class="simple">
+<li><p>the column labeled <em>D_nom</em> contains the available nominal pipe diameters</p></li>
+<li><p>the column labeled <em>D_ext</em> contains the corresponding exterior diameters</p></li>
+<li><p>the column labeled <em>t</em> contains the corresponding pipe wall thicknesses</p></li>
+<li><p>the column labeled <em>D_int</em> contains the corresponding interior diameters</p></li>
+</ul>
+<p>The values can be expressed in any appropriate measuring unit you prefer, however this unit must be the same for all values in the table.</p>
+<p>Having the spreadsheet files saved at a known file location, we can now create the schedules as follows:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">copper_schedule</span> <span class="o">=</span> <span class="n">PipeScheduleFactory</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s1">&#39;copper&#39;</span><span class="p">,</span>
+    <span class="n">file_path</span><span class="o">=</span><span class="s1">&#39;./pipe-schedule-data/copper_tube.ods&#39;</span><span class="p">,</span>
+    <span class="n">unit</span><span class="o">=</span><span class="s1">&#39;mm&#39;</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>We assign the reference name we have used in the pipe network configuration file to the parameter <code class="docutils literal notranslate"><span class="pre">name</span></code>. Next we specify the file path where the schedule file is stored and the unit in which we have expressed the values of the pipe diameters in the table. (The default unit is ‘mm’, so we could have omitted the parameter <code class="docutils literal notranslate"><span class="pre">unit</span></code> here, however we included it for completeness.) Now we can do exactly the same thing to create our “pex” schedule:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pex_schedule</span> <span class="o">=</span> <span class="n">PipeScheduleFactory</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s1">&#39;pex&#39;</span><span class="p">,</span>
+    <span class="n">file_path</span><span class="o">=</span><span class="s1">&#39;./pipe-schedule-data/henco_standard_pex.ods&#39;</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="creating-the-closed-pipe-network">
+<h3>Creating the Closed Pipe Network<a class="headerlink" href="#creating-the-closed-pipe-network" title="Permalink to this headline">#</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pipe_network</span> <span class="o">=</span> <span class="n">PipeNetwork</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
+    <span class="n">ID</span><span class="o">=</span><span class="s1">&#39;heating_system&#39;</span><span class="p">,</span>
+    <span class="n">fluid</span><span class="o">=</span><span class="n">heating_water</span><span class="p">,</span>
+    <span class="n">wall_roughness</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mf">0.0015</span><span class="p">,</span> <span class="s1">&#39;mm&#39;</span><span class="p">),</span>
+    <span class="n">schedule</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">start_node_ID</span><span class="o">=</span><span class="s1">&#39;S0&#39;</span><span class="p">,</span>
+    <span class="n">end_node_ID</span><span class="o">=</span><span class="s1">&#39;R0&#39;</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>A pipe network is created by calling the class method <code class="docutils literal notranslate"><span class="pre">create</span></code> of the <code class="docutils literal notranslate"><span class="pre">PipeNetwork</span></code> class. The code block above shows which parameters the method needs to create a closed pipe network. A closed pipe network is a network that has a start node, where all fluid enters the network, and that has only one end node, where all fluid leaves the network. (It is also possible to configure an open pipe network, which has multiple end nodes, e.g. a drinking water distrubution system, which will be demonstrated in a subsequent notebook).</p>
+<p>Through parameter <code class="docutils literal notranslate"><span class="pre">wall_roughness</span></code> the absolute pipe wall roughness of all pipes in the network is set. If not all pipes in the network have the same absolute roughness, you can add a column <em>wall_roughness</em> to the pipe network configuration file and then set the parameter <code class="docutils literal notranslate"><span class="pre">wall_roughness</span></code> in the call to method <code class="docutils literal notranslate"><span class="pre">create</span></code> to <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
+<p>The parameter <code class="docutils literal notranslate"><span class="pre">schedule</span></code> has been set to <code class="docutils literal notranslate"><span class="pre">None</span></code>, as not all pipes in the network belong to the same schedule.</p>
+</section>
+<section id="setting-units">
+<h3>Setting Units<a class="headerlink" href="#setting-units" title="Permalink to this headline">#</a></h3>
+<p>Before moving on, we must make sure that the program will do the calculations with the units we had in mind when we wrote the pipe network configuration file. Units can be set through the attribute <code class="docutils literal notranslate"><span class="pre">units</span></code> of the <code class="docutils literal notranslate"><span class="pre">PipeNetwork</span></code> instance we’ve just created. Units can be assigned to the following quantities:</p>
+<table class="colwidths-auto table">
+<thead>
+<tr class="row-odd"><th class="head"><p>quantity</p></th>
+<th class="head"><p>keyword</p></th>
+<th class="head"><p>default unit</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>pipe length</p></td>
+<td><p>‘length’</p></td>
+<td><p>‘m’</p></td>
+</tr>
+<tr class="row-odd"><td><p>diameter</p></td>
+<td><p>‘diameter’</p></td>
+<td><p>‘mm’</p></td>
+</tr>
+<tr class="row-even"><td><p>width (duct)</p></td>
+<td><p>‘dim_width’</p></td>
+<td><p>‘mm’</p></td>
+</tr>
+<tr class="row-odd"><td><p>height (duct)</p></td>
+<td><p>‘dim_height’</p></td>
+<td><p>‘mm’</p></td>
+</tr>
+<tr class="row-even"><td><p>volume flow rate</p></td>
+<td><p>‘volume_flow_rate’</p></td>
+<td><p>‘m ** 3 / s’</p></td>
+</tr>
+<tr class="row-odd"><td><p>flow velocity</p></td>
+<td><p>‘velocity’</p></td>
+<td><p>‘m / s’</p></td>
+</tr>
+<tr class="row-even"><td><p>pressure (difference)</p></td>
+<td><p>‘pressure’</p></td>
+<td><p>‘Pa’</p></td>
+</tr>
+<tr class="row-odd"><td><p>specific pressure drop</p></td>
+<td><p>‘specific_pressure’</p></td>
+<td><p>‘Pa / m’</p></td>
+</tr>
+<tr class="row-even"><td><p>pressure head</p></td>
+<td><p>‘pressure_head</p></td>
+<td><p>‘Pa’</p></td>
+</tr>
+<tr class="row-odd"><td><p>altitude (elevation)</p></td>
+<td><p>‘height’</p></td>
+<td><p>‘m’</p></td>
+</tr>
+<tr class="row-even"><td><p>absolute pipe wall roughness</p></td>
+<td><p>‘wall_roughness’</p></td>
+<td><p>‘mm’</p></td>
+</tr>
+<tr class="row-odd"><td><p>pump or fan coefficients</p></td>
+<td><p>‘machine_coefficients’</p></td>
+<td><p>[‘Pa’, ‘Pa / (m ** 3 / s)’, ‘Pa / (m ** 3 / s) ** 2’]</p></td>
+</tr>
+</tbody>
+</table>
+<p>In our example volume flow rate is expressed in units of L/s, and specific pressure drop in units of kPa/m. Furthermore, we want pressures and pressure differences be expressed in units of kPa.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pipe_network</span><span class="o">.</span><span class="n">units</span><span class="p">[</span><span class="s1">&#39;volume_flow_rate&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;L / s&#39;</span>
+<span class="n">pipe_network</span><span class="o">.</span><span class="n">units</span><span class="p">[</span><span class="s1">&#39;pressure&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;kPa&#39;</span>
+<span class="n">pipe_network</span><span class="o">.</span><span class="n">units</span><span class="p">[</span><span class="s1">&#39;specific_pressure&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;kPa / m&#39;</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="load-the-pipe-network-configuration-file-into-the-pipenetwork-instance">
+<h3>Load the Pipe Network Configuration File into the <code class="docutils literal notranslate"><span class="pre">PipeNetwork</span></code> Instance<a class="headerlink" href="#load-the-pipe-network-configuration-file-into-the-pipenetwork-instance" title="Permalink to this headline">#</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pipe_network</span><span class="o">.</span><span class="n">load_from_csv</span><span class="p">(</span><span class="s1">&#39;./networks/ex1_closed-pipe-network-design.csv&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>When the method <code class="docutils literal notranslate"><span class="pre">load_from_csv</span></code> is called, the program will immediately calculate the required diameter of each pipe. We can get an overview of the pipes in the network by calling the method <code class="docutils literal notranslate"><span class="pre">get_pipe_table</span></code>, which returns a Pandas <code class="docutils literal notranslate"><span class="pre">DataFrame</span></code> object.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ja</span><span class="o">.</span><span class="n">display_table</span><span class="p">(</span><span class="n">pipe_network</span><span class="o">.</span><span class="n">get_pipe_table</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div class="my_table"><table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>pipe ID</th>
+      <th>L [m]</th>
+      <th>DN [mm]</th>
+      <th>Di [mm]</th>
+      <th>V [l/s]</th>
+      <th>v [m/s]</th>
+      <th>zeta</th>
+      <th>Re</th>
+      <th>Δp-dyn. [kPa]</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>P1</td>
+      <td>4.0</td>
+      <td>35.0</td>
+      <td>32.0</td>
+      <td>0.458</td>
+      <td>0.569476</td>
+      <td>0</td>
+      <td>32945.645835</td>
+      <td>0.462787</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>P2</td>
+      <td>2.0</td>
+      <td>28.0</td>
+      <td>25.0</td>
+      <td>0.397</td>
+      <td>0.808762</td>
+      <td>0</td>
+      <td>36553.841457</td>
+      <td>0.584486</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>P3</td>
+      <td>2.0</td>
+      <td>22.0</td>
+      <td>20.0</td>
+      <td>0.214</td>
+      <td>0.681183</td>
+      <td>0</td>
+      <td>24630.107279</td>
+      <td>0.568306</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>P4</td>
+      <td>2.0</td>
+      <td>18.0</td>
+      <td>16.0</td>
+      <td>0.122</td>
+      <td>0.606778</td>
+      <td>0</td>
+      <td>17551.828785</td>
+      <td>0.612130</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>P5</td>
+      <td>25.0</td>
+      <td>18.0</td>
+      <td>14.0</td>
+      <td>0.061</td>
+      <td>0.396263</td>
+      <td>0</td>
+      <td>10029.616449</td>
+      <td>4.297709</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>P6</td>
+      <td>25.0</td>
+      <td>26.0</td>
+      <td>20.0</td>
+      <td>0.183</td>
+      <td>0.582507</td>
+      <td>0</td>
+      <td>21062.194542</td>
+      <td>5.390640</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>P7</td>
+      <td>15.0</td>
+      <td>20.0</td>
+      <td>16.0</td>
+      <td>0.092</td>
+      <td>0.457570</td>
+      <td>0</td>
+      <td>13235.805313</td>
+      <td>2.799807</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>P8</td>
+      <td>20.0</td>
+      <td>20.0</td>
+      <td>16.0</td>
+      <td>0.122</td>
+      <td>0.606778</td>
+      <td>0</td>
+      <td>17551.828785</td>
+      <td>6.121301</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>P9</td>
+      <td>2.0</td>
+      <td>18.0</td>
+      <td>16.0</td>
+      <td>0.122</td>
+      <td>0.606778</td>
+      <td>0</td>
+      <td>17551.828785</td>
+      <td>0.612130</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>P10</td>
+      <td>2.0</td>
+      <td>22.0</td>
+      <td>20.0</td>
+      <td>0.214</td>
+      <td>0.681183</td>
+      <td>0</td>
+      <td>24630.107279</td>
+      <td>0.568306</td>
+    </tr>
+    <tr>
+      <th>10</th>
+      <td>P11</td>
+      <td>2.0</td>
+      <td>28.0</td>
+      <td>25.0</td>
+      <td>0.397</td>
+      <td>0.808762</td>
+      <td>0</td>
+      <td>36553.841457</td>
+      <td>0.584486</td>
+    </tr>
+    <tr>
+      <th>11</th>
+      <td>P12</td>
+      <td>4.0</td>
+      <td>35.0</td>
+      <td>32.0</td>
+      <td>0.458</td>
+      <td>0.569476</td>
+      <td>0</td>
+      <td>32945.645835</td>
+      <td>0.462787</td>
+    </tr>
+  </tbody>
+</table></div></div></div>
+</div>
+</section>
+</section>
+<section id="add-fittings-to-the-pipe-network">
+<h2>Add Fittings to the Pipe Network<a class="headerlink" href="#add-fittings-to-the-pipe-network" title="Permalink to this headline">#</a></h2>
+<p>After all the pipe diameters in the network are calculated, we can add fittings to these pipes. To add fittings to a pipe we need to import the module <code class="docutils literal notranslate"><span class="pre">hvac.fluid_flow.fittings.pipe</span></code>:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">hvac.fluid_flow.fittings</span> <span class="kn">import</span> <span class="n">pipe</span> <span class="k">as</span> <span class="n">pipe_fittings</span>
+</pre></div>
+</div>
+</div>
+</div>
+<section id="tees">
+<h3>Tees<a class="headerlink" href="#tees" title="Permalink to this headline">#</a></h3>
+<p>For a number of pipe fittings and valves the resistance coefficient can be calculated according to the formulas in the well-known technical guide TP-410M published by Crane. These fittings and valves are located in the module <code class="docutils literal notranslate"><span class="pre">crane.py</span></code> of the above mentioned package. In the following we will add tees at the nodes of the cross-overs in the network. On the supply side of the network (with the ‘S<em>x</em>’ labeled nodes in the scheme above) the fluid flow at the nodes is diverging, while on the return side of the network (with the ‘R<em>x</em>’ labeled nodes) the fluid flow is converging. The ‘combined pipe’ of a tee is the pipe in which the fluid flow is greatest (i.e. the sum of the flow that will go through the branch and the flow that will continue in the straight leg). To create a tee for node S1, the following code will do:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">tee_S1</span> <span class="o">=</span> <span class="n">pipe_fittings</span><span class="o">.</span><span class="n">Tee</span><span class="p">(</span>
+    <span class="n">flow_pattern</span><span class="o">=</span><span class="s1">&#39;diverging&#39;</span><span class="p">,</span>
+    <span class="n">combined_pipe</span><span class="o">=</span><span class="n">pipe_network</span><span class="o">.</span><span class="n">conduits</span><span class="p">[</span><span class="s1">&#39;P1&#39;</span><span class="p">],</span>
+    <span class="n">branch_pipe</span><span class="o">=</span><span class="n">pipe_network</span><span class="o">.</span><span class="n">conduits</span><span class="p">[</span><span class="s1">&#39;P5&#39;</span><span class="p">],</span>
+    <span class="n">ID</span><span class="o">=</span><span class="s1">&#39;TEE-S1&#39;</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>We can access the pipes in the network through the attribute <code class="docutils literal notranslate"><span class="pre">conduits</span></code>, which is a dictionary of which the keys are the ID’s we gave to our pipes in the configuration file. After a tee has been created, we still need to assign the resistance coefficient of the tee to the pipes. In the case of a tee fitting we have two resistance coefficients: one in the combined leg (<code class="docutils literal notranslate"><span class="pre">zeta_c</span></code>) and one in the branch leg (<code class="docutils literal notranslate"><span class="pre">zeta_b</span></code>).</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pipe_network</span><span class="o">.</span><span class="n">conduits</span><span class="p">[</span><span class="s1">&#39;P1&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">add_fitting</span><span class="p">(</span><span class="n">tee_S1</span><span class="o">.</span><span class="n">zeta_c</span><span class="p">,</span> <span class="n">tee_S1</span><span class="o">.</span><span class="n">ID</span><span class="p">)</span>
+<span class="n">pipe_network</span><span class="o">.</span><span class="n">conduits</span><span class="p">[</span><span class="s1">&#39;P5&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">add_fitting</span><span class="p">(</span><span class="n">tee_S1</span><span class="o">.</span><span class="n">zeta_b</span><span class="p">,</span> <span class="n">tee_S1</span><span class="o">.</span><span class="n">ID</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>In the same way we also add diverging tees to nodes S2 and S3 and converging tees to nodes R1, R2, and R3.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">tee_S2</span> <span class="o">=</span> <span class="n">pipe_fittings</span><span class="o">.</span><span class="n">Tee</span><span class="p">(</span>
+    <span class="n">flow_pattern</span><span class="o">=</span><span class="s1">&#39;diverging&#39;</span><span class="p">,</span>
+    <span class="n">combined_pipe</span><span class="o">=</span><span class="n">pipe_network</span><span class="o">.</span><span class="n">conduits</span><span class="p">[</span><span class="s1">&#39;P2&#39;</span><span class="p">],</span>
+    <span class="n">branch_pipe</span><span class="o">=</span><span class="n">pipe_network</span><span class="o">.</span><span class="n">conduits</span><span class="p">[</span><span class="s1">&#39;P6&#39;</span><span class="p">],</span>
+    <span class="n">ID</span><span class="o">=</span><span class="s1">&#39;TEE-S2&#39;</span>
+<span class="p">)</span>
+<span class="n">pipe_network</span><span class="o">.</span><span class="n">conduits</span><span class="p">[</span><span class="s1">&#39;P2&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">add_fitting</span><span class="p">(</span><span class="n">tee_S2</span><span class="o">.</span><span class="n">zeta_c</span><span class="p">,</span> <span class="n">tee_S2</span><span class="o">.</span><span class="n">ID</span><span class="p">)</span>
+<span class="n">pipe_network</span><span class="o">.</span><span class="n">conduits</span><span class="p">[</span><span class="s1">&#39;P6&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">add_fitting</span><span class="p">(</span><span class="n">tee_S2</span><span class="o">.</span><span class="n">zeta_b</span><span class="p">,</span> <span class="n">tee_S2</span><span class="o">.</span><span class="n">ID</span><span class="p">)</span>
+
+<span class="n">tee_S3</span> <span class="o">=</span> <span class="n">pipe_fittings</span><span class="o">.</span><span class="n">Tee</span><span class="p">(</span>
+    <span class="n">flow_pattern</span><span class="o">=</span><span class="s1">&#39;diverging&#39;</span><span class="p">,</span>
+    <span class="n">combined_pipe</span><span class="o">=</span><span class="n">pipe_network</span><span class="o">.</span><span class="n">conduits</span><span class="p">[</span><span class="s1">&#39;P3&#39;</span><span class="p">],</span>
+    <span class="n">branch_pipe</span><span class="o">=</span><span class="n">pipe_network</span><span class="o">.</span><span class="n">conduits</span><span class="p">[</span><span class="s1">&#39;P7&#39;</span><span class="p">],</span>
+    <span class="n">ID</span><span class="o">=</span><span class="s1">&#39;TEE-S3&#39;</span>
+<span class="p">)</span>
+<span class="n">pipe_network</span><span class="o">.</span><span class="n">conduits</span><span class="p">[</span><span class="s1">&#39;P3&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">add_fitting</span><span class="p">(</span><span class="n">tee_S3</span><span class="o">.</span><span class="n">zeta_c</span><span class="p">,</span> <span class="n">tee_S3</span><span class="o">.</span><span class="n">ID</span><span class="p">)</span>
+<span class="n">pipe_network</span><span class="o">.</span><span class="n">conduits</span><span class="p">[</span><span class="s1">&#39;P7&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">add_fitting</span><span class="p">(</span><span class="n">tee_S3</span><span class="o">.</span><span class="n">zeta_b</span><span class="p">,</span> <span class="n">tee_S3</span><span class="o">.</span><span class="n">ID</span><span class="p">)</span>
+
+<span class="n">tee_R1</span> <span class="o">=</span> <span class="n">pipe_fittings</span><span class="o">.</span><span class="n">Tee</span><span class="p">(</span>
+    <span class="n">flow_pattern</span><span class="o">=</span><span class="s1">&#39;converging&#39;</span><span class="p">,</span>
+    <span class="n">combined_pipe</span><span class="o">=</span><span class="n">pipe_network</span><span class="o">.</span><span class="n">conduits</span><span class="p">[</span><span class="s1">&#39;P12&#39;</span><span class="p">],</span>
+    <span class="n">branch_pipe</span><span class="o">=</span><span class="n">pipe_network</span><span class="o">.</span><span class="n">conduits</span><span class="p">[</span><span class="s1">&#39;P5&#39;</span><span class="p">],</span>
+    <span class="n">ID</span><span class="o">=</span><span class="s1">&#39;TEE-R1&#39;</span>
+<span class="p">)</span>
+<span class="n">pipe_network</span><span class="o">.</span><span class="n">conduits</span><span class="p">[</span><span class="s1">&#39;P12&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">add_fitting</span><span class="p">(</span><span class="n">tee_R1</span><span class="o">.</span><span class="n">zeta_c</span><span class="p">,</span> <span class="n">tee_R1</span><span class="o">.</span><span class="n">ID</span><span class="p">)</span>
+<span class="n">pipe_network</span><span class="o">.</span><span class="n">conduits</span><span class="p">[</span><span class="s1">&#39;P5&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">add_fitting</span><span class="p">(</span><span class="n">tee_R1</span><span class="o">.</span><span class="n">zeta_b</span><span class="p">,</span> <span class="n">tee_R1</span><span class="o">.</span><span class="n">ID</span><span class="p">)</span>
+
+<span class="n">tee_R2</span> <span class="o">=</span> <span class="n">pipe_fittings</span><span class="o">.</span><span class="n">Tee</span><span class="p">(</span>
+    <span class="n">flow_pattern</span><span class="o">=</span><span class="s1">&#39;converging&#39;</span><span class="p">,</span>
+    <span class="n">combined_pipe</span><span class="o">=</span><span class="n">pipe_network</span><span class="o">.</span><span class="n">conduits</span><span class="p">[</span><span class="s1">&#39;P11&#39;</span><span class="p">],</span>
+    <span class="n">branch_pipe</span><span class="o">=</span><span class="n">pipe_network</span><span class="o">.</span><span class="n">conduits</span><span class="p">[</span><span class="s1">&#39;P6&#39;</span><span class="p">],</span>
+    <span class="n">ID</span><span class="o">=</span><span class="s1">&#39;TEE-R2&#39;</span>
+<span class="p">)</span>
+<span class="n">pipe_network</span><span class="o">.</span><span class="n">conduits</span><span class="p">[</span><span class="s1">&#39;P11&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">add_fitting</span><span class="p">(</span><span class="n">tee_R2</span><span class="o">.</span><span class="n">zeta_c</span><span class="p">,</span> <span class="n">tee_R2</span><span class="o">.</span><span class="n">ID</span><span class="p">)</span>
+<span class="n">pipe_network</span><span class="o">.</span><span class="n">conduits</span><span class="p">[</span><span class="s1">&#39;P6&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">add_fitting</span><span class="p">(</span><span class="n">tee_R2</span><span class="o">.</span><span class="n">zeta_b</span><span class="p">,</span> <span class="n">tee_R2</span><span class="o">.</span><span class="n">ID</span><span class="p">)</span>
+
+<span class="n">tee_R3</span> <span class="o">=</span> <span class="n">pipe_fittings</span><span class="o">.</span><span class="n">Tee</span><span class="p">(</span>
+    <span class="n">flow_pattern</span><span class="o">=</span><span class="s1">&#39;converging&#39;</span><span class="p">,</span>
+    <span class="n">combined_pipe</span><span class="o">=</span><span class="n">pipe_network</span><span class="o">.</span><span class="n">conduits</span><span class="p">[</span><span class="s1">&#39;P10&#39;</span><span class="p">],</span>
+    <span class="n">branch_pipe</span><span class="o">=</span><span class="n">pipe_network</span><span class="o">.</span><span class="n">conduits</span><span class="p">[</span><span class="s1">&#39;P7&#39;</span><span class="p">],</span>
+    <span class="n">ID</span><span class="o">=</span><span class="s1">&#39;TEE-R3&#39;</span>
+<span class="p">)</span>
+<span class="n">pipe_network</span><span class="o">.</span><span class="n">conduits</span><span class="p">[</span><span class="s1">&#39;P10&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">add_fitting</span><span class="p">(</span><span class="n">tee_R3</span><span class="o">.</span><span class="n">zeta_c</span><span class="p">,</span> <span class="n">tee_R3</span><span class="o">.</span><span class="n">ID</span><span class="p">)</span>
+<span class="n">pipe_network</span><span class="o">.</span><span class="n">conduits</span><span class="p">[</span><span class="s1">&#39;P7&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">add_fitting</span><span class="p">(</span><span class="n">tee_R3</span><span class="o">.</span><span class="n">zeta_b</span><span class="p">,</span> <span class="n">tee_R3</span><span class="o">.</span><span class="n">ID</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="reducers-and-enlargers">
+<h3>Reducers and Enlargers<a class="headerlink" href="#reducers-and-enlargers" title="Permalink to this headline">#</a></h3>
+<p>On the supply side the diameter of pipe P1 is larger than the diameter of pipe P2, the diameter of pipe P2 is larger than the diameter of pipe P3, and the diameter of pipe P3 is larger than the diameter of pipe P4. On the return side the reverse is true. Therefore, we will add reducers on the supply side and enlargers on the return side. Reducers will be placed at the beginning of the smallest pipe (notice the use of <code class="docutils literal notranslate"><span class="pre">zeta_small</span></code>, i.e. the resistance coefficient of the reducer referenced to the pipe with the smaller diameter), while enlargers will be placed at the beginning of the largest pipe (notice the use of <code class="docutils literal notranslate"><span class="pre">zeta_large</span></code>). Parameter <code class="docutils literal notranslate"><span class="pre">L</span></code> is the length of the reducer or enlarger.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">reducer_S1</span> <span class="o">=</span> <span class="n">pipe_fittings</span><span class="o">.</span><span class="n">Reducer</span><span class="p">(</span>
+    <span class="n">large_pipe</span><span class="o">=</span><span class="n">pipe_network</span><span class="o">.</span><span class="n">conduits</span><span class="p">[</span><span class="s1">&#39;P1&#39;</span><span class="p">],</span>
+    <span class="n">small_pipe</span><span class="o">=</span><span class="n">pipe_network</span><span class="o">.</span><span class="n">conduits</span><span class="p">[</span><span class="s1">&#39;P2&#39;</span><span class="p">],</span>
+    <span class="n">L</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mf">5.0</span><span class="p">,</span> <span class="s1">&#39;cm&#39;</span><span class="p">),</span>
+    <span class="n">ID</span><span class="o">=</span><span class="s1">&#39;RED-S1&#39;</span>
+<span class="p">)</span>
+<span class="n">pipe_network</span><span class="o">.</span><span class="n">conduits</span><span class="p">[</span><span class="s1">&#39;P2&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">add_fitting</span><span class="p">(</span><span class="n">reducer_S1</span><span class="o">.</span><span class="n">zeta_small</span><span class="p">,</span> <span class="n">reducer_S1</span><span class="o">.</span><span class="n">ID</span><span class="p">)</span>
+
+<span class="n">reducer_S2</span> <span class="o">=</span> <span class="n">pipe_fittings</span><span class="o">.</span><span class="n">Reducer</span><span class="p">(</span>
+    <span class="n">large_pipe</span><span class="o">=</span><span class="n">pipe_network</span><span class="o">.</span><span class="n">conduits</span><span class="p">[</span><span class="s1">&#39;P2&#39;</span><span class="p">],</span>
+    <span class="n">small_pipe</span><span class="o">=</span><span class="n">pipe_network</span><span class="o">.</span><span class="n">conduits</span><span class="p">[</span><span class="s1">&#39;P3&#39;</span><span class="p">],</span>
+    <span class="n">L</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mf">5.0</span><span class="p">,</span> <span class="s1">&#39;cm&#39;</span><span class="p">),</span>
+    <span class="n">ID</span><span class="o">=</span><span class="s1">&#39;RED-S2&#39;</span>
+<span class="p">)</span>
+<span class="n">pipe_network</span><span class="o">.</span><span class="n">conduits</span><span class="p">[</span><span class="s1">&#39;P3&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">add_fitting</span><span class="p">(</span><span class="n">reducer_S2</span><span class="o">.</span><span class="n">zeta_small</span><span class="p">,</span> <span class="n">reducer_S2</span><span class="o">.</span><span class="n">ID</span><span class="p">)</span>
+
+<span class="n">reducer_S3</span> <span class="o">=</span> <span class="n">pipe_fittings</span><span class="o">.</span><span class="n">Reducer</span><span class="p">(</span>
+    <span class="n">large_pipe</span><span class="o">=</span><span class="n">pipe_network</span><span class="o">.</span><span class="n">conduits</span><span class="p">[</span><span class="s1">&#39;P3&#39;</span><span class="p">],</span>
+    <span class="n">small_pipe</span><span class="o">=</span><span class="n">pipe_network</span><span class="o">.</span><span class="n">conduits</span><span class="p">[</span><span class="s1">&#39;P4&#39;</span><span class="p">],</span>
+    <span class="n">L</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mf">5.0</span><span class="p">,</span> <span class="s1">&#39;cm&#39;</span><span class="p">),</span>
+    <span class="n">ID</span><span class="o">=</span><span class="s1">&#39;RED-S3&#39;</span>
+<span class="p">)</span>
+<span class="n">pipe_network</span><span class="o">.</span><span class="n">conduits</span><span class="p">[</span><span class="s1">&#39;P4&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">add_fitting</span><span class="p">(</span><span class="n">reducer_S3</span><span class="o">.</span><span class="n">zeta_small</span><span class="p">,</span> <span class="n">reducer_S3</span><span class="o">.</span><span class="n">ID</span><span class="p">)</span>
+
+<span class="n">enlarger_R1</span> <span class="o">=</span> <span class="n">pipe_fittings</span><span class="o">.</span><span class="n">Enlarger</span><span class="p">(</span>
+    <span class="n">large_pipe</span><span class="o">=</span><span class="n">pipe_network</span><span class="o">.</span><span class="n">conduits</span><span class="p">[</span><span class="s1">&#39;P12&#39;</span><span class="p">],</span>
+    <span class="n">small_pipe</span><span class="o">=</span><span class="n">pipe_network</span><span class="o">.</span><span class="n">conduits</span><span class="p">[</span><span class="s1">&#39;P11&#39;</span><span class="p">],</span>
+    <span class="n">L</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mf">5.0</span><span class="p">,</span> <span class="s1">&#39;cm&#39;</span><span class="p">),</span>
+    <span class="n">ID</span><span class="o">=</span><span class="s1">&#39;ENL-R1&#39;</span>
+<span class="p">)</span>
+<span class="n">pipe_network</span><span class="o">.</span><span class="n">conduits</span><span class="p">[</span><span class="s1">&#39;P12&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">add_fitting</span><span class="p">(</span><span class="n">enlarger_R1</span><span class="o">.</span><span class="n">zeta_large</span><span class="p">,</span> <span class="n">enlarger_R1</span><span class="o">.</span><span class="n">ID</span><span class="p">)</span>
+
+<span class="n">enlarger_R2</span> <span class="o">=</span> <span class="n">pipe_fittings</span><span class="o">.</span><span class="n">Enlarger</span><span class="p">(</span>
+    <span class="n">large_pipe</span><span class="o">=</span><span class="n">pipe_network</span><span class="o">.</span><span class="n">conduits</span><span class="p">[</span><span class="s1">&#39;P11&#39;</span><span class="p">],</span>
+    <span class="n">small_pipe</span><span class="o">=</span><span class="n">pipe_network</span><span class="o">.</span><span class="n">conduits</span><span class="p">[</span><span class="s1">&#39;P10&#39;</span><span class="p">],</span>
+    <span class="n">L</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mf">5.0</span><span class="p">,</span> <span class="s1">&#39;cm&#39;</span><span class="p">),</span>
+    <span class="n">ID</span><span class="o">=</span><span class="s1">&#39;ENL-R2&#39;</span>
+<span class="p">)</span>
+<span class="n">pipe_network</span><span class="o">.</span><span class="n">conduits</span><span class="p">[</span><span class="s1">&#39;P11&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">add_fitting</span><span class="p">(</span><span class="n">enlarger_R2</span><span class="o">.</span><span class="n">zeta_large</span><span class="p">,</span> <span class="n">enlarger_R2</span><span class="o">.</span><span class="n">ID</span><span class="p">)</span>
+
+<span class="n">enlarger_R3</span> <span class="o">=</span> <span class="n">pipe_fittings</span><span class="o">.</span><span class="n">Enlarger</span><span class="p">(</span>
+    <span class="n">large_pipe</span><span class="o">=</span><span class="n">pipe_network</span><span class="o">.</span><span class="n">conduits</span><span class="p">[</span><span class="s1">&#39;P10&#39;</span><span class="p">],</span>
+    <span class="n">small_pipe</span><span class="o">=</span><span class="n">pipe_network</span><span class="o">.</span><span class="n">conduits</span><span class="p">[</span><span class="s1">&#39;P9&#39;</span><span class="p">],</span>
+    <span class="n">L</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mf">5.0</span><span class="p">,</span> <span class="s1">&#39;cm&#39;</span><span class="p">),</span>
+    <span class="n">ID</span><span class="o">=</span><span class="s1">&#39;ENL-R3&#39;</span>
+<span class="p">)</span>
+<span class="n">pipe_network</span><span class="o">.</span><span class="n">conduits</span><span class="p">[</span><span class="s1">&#39;P10&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">add_fitting</span><span class="p">(</span><span class="n">enlarger_R3</span><span class="o">.</span><span class="n">zeta_large</span><span class="p">,</span> <span class="n">enlarger_R3</span><span class="o">.</span><span class="n">ID</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="elbows">
+<h3>Elbows<a class="headerlink" href="#elbows" title="Permalink to this headline">#</a></h3>
+<p>In the nodes S4 and R4 we will add elbows. Elbows don’t have a dedicated class. You need to use the general <code class="docutils literal notranslate"><span class="pre">PipeFitting</span></code> class. A pipe fitting can be characterized in a number of ways:</p>
+<ul class="simple">
+<li><p>using a flow coefficient <em>K<sub>v</sub></em>, which is usually applicable to valves</p></li>
+<li><p>using the 3K-method, which implies that a fitting is characterized by three different resistance coefficients: <em>zeta</em>, <em>zeta_d</em> and <em>zeta_inf</em></p></li>
+<li><p>using Crane’s <em>equivalent length ratio</em> (<em>ELR</em>); see Crane TP-410M</p></li>
+<li><p>using a single resistance coefficient <em>zeta</em> specified in a fittings catalog</p></li>
+</ul>
+<p>Any of these possibilities can be used to create a <code class="docutils literal notranslate"><span class="pre">PipeFitting</span></code> instance (you can take a look at the source code in the module <code class="docutils literal notranslate"><span class="pre">hvac.fluid_flow.fittings.pipe.general</span></code>). For this example we use the ELR from Crane TP-410M.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">elbow_S4</span> <span class="o">=</span> <span class="n">pipe_fittings</span><span class="o">.</span><span class="n">PipeFitting</span><span class="p">(</span>
+    <span class="n">pipe</span><span class="o">=</span><span class="n">pipe_network</span><span class="o">.</span><span class="n">conduits</span><span class="p">[</span><span class="s1">&#39;P4&#39;</span><span class="p">],</span>
+    <span class="n">ID</span><span class="o">=</span><span class="s1">&#39;ELBOW-S4&#39;</span><span class="p">,</span>
+    <span class="n">ELR</span><span class="o">=</span><span class="mi">30</span>
+<span class="p">)</span>
+<span class="n">pipe_network</span><span class="o">.</span><span class="n">conduits</span><span class="p">[</span><span class="s1">&#39;P4&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">add_fitting</span><span class="p">(</span><span class="n">elbow_S4</span><span class="o">.</span><span class="n">zeta</span><span class="p">,</span> <span class="n">elbow_S4</span><span class="o">.</span><span class="n">ID</span><span class="p">)</span>
+
+<span class="n">elbow_R4</span> <span class="o">=</span> <span class="n">pipe_fittings</span><span class="o">.</span><span class="n">PipeFitting</span><span class="p">(</span>
+    <span class="n">pipe</span><span class="o">=</span><span class="n">pipe_network</span><span class="o">.</span><span class="n">conduits</span><span class="p">[</span><span class="s1">&#39;P9&#39;</span><span class="p">],</span>
+    <span class="n">ID</span><span class="o">=</span><span class="s1">&#39;ELBOW-R4&#39;</span><span class="p">,</span>
+    <span class="n">ELR</span><span class="o">=</span><span class="mi">30</span>
+<span class="p">)</span>
+<span class="n">pipe_network</span><span class="o">.</span><span class="n">conduits</span><span class="p">[</span><span class="s1">&#39;P9&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">add_fitting</span><span class="p">(</span><span class="n">elbow_R4</span><span class="o">.</span><span class="n">zeta</span><span class="p">,</span> <span class="n">elbow_R4</span><span class="o">.</span><span class="n">ID</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="pipes-fittings-and-flow-paths-overview">
+<h2>Pipes, Fittings and Flow Paths Overview<a class="headerlink" href="#pipes-fittings-and-flow-paths-overview" title="Permalink to this headline">#</a></h2>
+<section id="pipes">
+<h3>Pipes<a class="headerlink" href="#pipes" title="Permalink to this headline">#</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ja</span><span class="o">.</span><span class="n">display_table</span><span class="p">(</span><span class="n">pipe_network</span><span class="o">.</span><span class="n">get_pipe_table</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div class="my_table"><table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>pipe ID</th>
+      <th>L [m]</th>
+      <th>DN [mm]</th>
+      <th>Di [mm]</th>
+      <th>V [l/s]</th>
+      <th>v [m/s]</th>
+      <th>zeta</th>
+      <th>Re</th>
+      <th>Δp-dyn. [kPa]</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>P1</td>
+      <td>4.0</td>
+      <td>35.0</td>
+      <td>32.0</td>
+      <td>0.458</td>
+      <td>0.569476</td>
+      <td>0.007096</td>
+      <td>32945.645835</td>
+      <td>0.463923</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>P2</td>
+      <td>2.0</td>
+      <td>28.0</td>
+      <td>25.0</td>
+      <td>0.397</td>
+      <td>0.808762</td>
+      <td>-0.011416</td>
+      <td>36553.841457</td>
+      <td>0.580797</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>P3</td>
+      <td>2.0</td>
+      <td>22.0</td>
+      <td>20.0</td>
+      <td>0.214</td>
+      <td>0.681183</td>
+      <td>-0.037437</td>
+      <td>24630.107279</td>
+      <td>0.559724</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>P4</td>
+      <td>2.0</td>
+      <td>18.0</td>
+      <td>16.0</td>
+      <td>0.122</td>
+      <td>0.606778</td>
+      <td>0.096462</td>
+      <td>17551.828785</td>
+      <td>0.629676</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>P5</td>
+      <td>25.0</td>
+      <td>18.0</td>
+      <td>14.0</td>
+      <td>0.061</td>
+      <td>0.396263</td>
+      <td>15.814630</td>
+      <td>10029.616449</td>
+      <td>5.524549</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>P6</td>
+      <td>25.0</td>
+      <td>26.0</td>
+      <td>20.0</td>
+      <td>0.183</td>
+      <td>0.582507</td>
+      <td>5.255931</td>
+      <td>21062.194542</td>
+      <td>6.271716</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>P7</td>
+      <td>15.0</td>
+      <td>20.0</td>
+      <td>16.0</td>
+      <td>0.092</td>
+      <td>0.457570</td>
+      <td>5.675522</td>
+      <td>13235.805313</td>
+      <td>3.386868</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>P8</td>
+      <td>20.0</td>
+      <td>20.0</td>
+      <td>16.0</td>
+      <td>0.122</td>
+      <td>0.606778</td>
+      <td>0.000000</td>
+      <td>17551.828785</td>
+      <td>6.121301</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>P9</td>
+      <td>2.0</td>
+      <td>18.0</td>
+      <td>16.0</td>
+      <td>0.122</td>
+      <td>0.606778</td>
+      <td>0.084951</td>
+      <td>17551.828785</td>
+      <td>0.627582</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>P10</td>
+      <td>2.0</td>
+      <td>22.0</td>
+      <td>20.0</td>
+      <td>0.214</td>
+      <td>0.681183</td>
+      <td>0.514415</td>
+      <td>24630.107279</td>
+      <td>0.686230</td>
+    </tr>
+    <tr>
+      <th>10</th>
+      <td>P11</td>
+      <td>2.0</td>
+      <td>28.0</td>
+      <td>25.0</td>
+      <td>0.397</td>
+      <td>0.808762</td>
+      <td>0.543084</td>
+      <td>36553.841457</td>
+      <td>0.759983</td>
+    </tr>
+    <tr>
+      <th>11</th>
+      <td>P12</td>
+      <td>4.0</td>
+      <td>35.0</td>
+      <td>32.0</td>
+      <td>0.458</td>
+      <td>0.569476</td>
+      <td>0.262696</td>
+      <td>32945.645835</td>
+      <td>0.504875</td>
+    </tr>
+  </tbody>
+</table></div></div></div>
+</div>
+</section>
+<section id="fittings">
+<h3>Fittings<a class="headerlink" href="#fittings" title="Permalink to this headline">#</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ja</span><span class="o">.</span><span class="n">display_table</span><span class="p">(</span><span class="n">pipe_network</span><span class="o">.</span><span class="n">get_fitting_table</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div class="my_table"><table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>conduit ID</th>
+      <th>fitting ID</th>
+      <th>zeta</th>
+      <th>pressure drop [kPa]</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>P1</td>
+      <td>TEE-S1</td>
+      <td>0.007096</td>
+      <td>0.001137</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>P2</td>
+      <td>TEE-S2</td>
+      <td>-0.033184</td>
+      <td>-0.010723</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>P2</td>
+      <td>RED-S1</td>
+      <td>0.021767</td>
+      <td>0.007034</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>P3</td>
+      <td>TEE-S3</td>
+      <td>-0.051819</td>
+      <td>-0.011879</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>P3</td>
+      <td>RED-S2</td>
+      <td>0.014382</td>
+      <td>0.003297</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>P4</td>
+      <td>RED-S3</td>
+      <td>0.011511</td>
+      <td>0.002094</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>P4</td>
+      <td>ELBOW-S4</td>
+      <td>0.084951</td>
+      <td>0.015452</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>P5</td>
+      <td>TEE-S1</td>
+      <td>16.014638</td>
+      <td>1.242356</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>P5</td>
+      <td>TEE-R1</td>
+      <td>-0.200008</td>
+      <td>-0.015516</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>P6</td>
+      <td>TEE-S2</td>
+      <td>3.702657</td>
+      <td>0.620693</td>
+    </tr>
+    <tr>
+      <th>10</th>
+      <td>P6</td>
+      <td>TEE-R2</td>
+      <td>1.553274</td>
+      <td>0.260382</td>
+    </tr>
+    <tr>
+      <th>11</th>
+      <td>P7</td>
+      <td>TEE-S3</td>
+      <td>4.149576</td>
+      <td>0.429221</td>
+    </tr>
+    <tr>
+      <th>12</th>
+      <td>P7</td>
+      <td>TEE-R3</td>
+      <td>1.525946</td>
+      <td>0.157840</td>
+    </tr>
+    <tr>
+      <th>13</th>
+      <td>P9</td>
+      <td>ELBOW-R4</td>
+      <td>0.084951</td>
+      <td>0.015452</td>
+    </tr>
+    <tr>
+      <th>14</th>
+      <td>P10</td>
+      <td>TEE-R3</td>
+      <td>0.481536</td>
+      <td>0.110387</td>
+    </tr>
+    <tr>
+      <th>15</th>
+      <td>P10</td>
+      <td>ENL-R3</td>
+      <td>0.032880</td>
+      <td>0.007537</td>
+    </tr>
+    <tr>
+      <th>16</th>
+      <td>P11</td>
+      <td>TEE-R2</td>
+      <td>0.502002</td>
+      <td>0.162221</td>
+    </tr>
+    <tr>
+      <th>17</th>
+      <td>P11</td>
+      <td>ENL-R2</td>
+      <td>0.041081</td>
+      <td>0.013275</td>
+    </tr>
+    <tr>
+      <th>18</th>
+      <td>P12</td>
+      <td>TEE-R1</td>
+      <td>0.188702</td>
+      <td>0.030234</td>
+    </tr>
+    <tr>
+      <th>19</th>
+      <td>P12</td>
+      <td>ENL-R1</td>
+      <td>0.073994</td>
+      <td>0.011855</td>
+    </tr>
+  </tbody>
+</table></div></div></div>
+</div>
+</section>
+<section id="flow-paths">
+<h3>Flow Paths<a class="headerlink" href="#flow-paths" title="Permalink to this headline">#</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ja</span><span class="o">.</span><span class="n">display_table</span><span class="p">(</span><span class="n">pipe_network</span><span class="o">.</span><span class="n">get_flow_path_table</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div class="my_table"><table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>path</th>
+      <th>Δp-elev. [kPa]</th>
+      <th>Δp-dyn. [kPa]</th>
+      <th>Δp-tot. [kPa]</th>
+      <th>Δp-deficit [kPa]</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>P1|P2|P3|P4|P8|P9|P10|P11|P12</td>
+      <td>0.0</td>
+      <td>10.934091</td>
+      <td>10.934091</td>
+      <td>0.000000</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>P1|P5|P12</td>
+      <td>0.0</td>
+      <td>6.493348</td>
+      <td>6.493348</td>
+      <td>4.440743</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>P1|P2|P6|P11|P12</td>
+      <td>0.0</td>
+      <td>8.581294</td>
+      <td>8.581294</td>
+      <td>2.352797</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>P1|P2|P3|P7|P10|P11|P12</td>
+      <td>0.0</td>
+      <td>6.942400</td>
+      <td>6.942400</td>
+      <td>3.991691</td>
+    </tr>
+  </tbody>
+</table></div></div></div>
+</div>
+<p>Calling method <code class="docutils literal notranslate"><span class="pre">get_flow_path_table</span></code> returns a Pandas <code class="docutils literal notranslate"><span class="pre">DataFrame</span></code> object with all the flow paths between the start and end node of the network. The first column <em>Δp-elev</em> refers to the gravity, stack or chimney effect, which is due to the difference in elevation between the start and end node of the network and due to the density difference between the fluid and the ambient air. In a closed hydronic network (closed loop) this term will always be zero. The second column <em>Δp-dyn</em> refers to the pressure loss due to pipe friction and dynamic effects in fittings and valves. The third column <em>Δp-tot</em> is the sum of the first two columns. The last column <em>Δp-deficit</em> refers to the difference in total pressure loss between the critical flow path (i.e. the path having the greatest pressure loss) and the other flow paths between the start and end node of the network. For the critical path this value will obviously be zero. In a perfectly balanced pipe network all flow paths will have a near zero pressure loss deficit.</p>
+</section>
+</section>
+<section id="add-balancing-valves-to-the-cross-overs-in-the-network">
+<h2>Add Balancing Valves to the Cross-Overs in the Network<a class="headerlink" href="#add-balancing-valves-to-the-cross-overs-in-the-network" title="Permalink to this headline">#</a></h2>
+<section id="calculate-preliminary-flow-coefficients">
+<h3>Calculate Preliminary Flow Coefficients<a class="headerlink" href="#calculate-preliminary-flow-coefficients" title="Permalink to this headline">#</a></h3>
+<p>In a balanced network the total pressure loss along each flow path will be equal to the pressure loss along the critical path of the network, when the design flow rates flow in each pipe of the pipe network. In other words, <em>Δp-deficit</em> of each flow path should be close to zero. If that is the case, there will be no preferential flow paths in the network and the design flow rates will actually be flowing trough each pipe of the network.</p>
+<p>Balancing valves are placed in the cross-overs between the supply and the return side, so that flow paths have no balancing valves in common. First, a preliminary flow or valve coefficient is calculated, such that a certain presribed pressure drop will be present across the balancing valve, when it is fully open. Normally, a pressure drop of 3 kPa is selected.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">cross_over_IDs</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;P5&#39;</span><span class="p">,</span> <span class="s1">&#39;P6&#39;</span><span class="p">,</span> <span class="s1">&#39;P7&#39;</span><span class="p">,</span> <span class="s1">&#39;P8&#39;</span><span class="p">]</span>
+
+<span class="n">Kvs_pre_list</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">pipe_network</span><span class="o">.</span><span class="n">add_balancing_valve</span><span class="p">(</span>
+        <span class="n">cross_over_ID</span><span class="o">=</span><span class="n">cross_over_ID</span><span class="p">,</span> 
+        <span class="n">pressure_drop_full_open</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="s1">&#39;kPa&#39;</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="k">for</span> <span class="n">cross_over_ID</span> <span class="ow">in</span> <span class="n">cross_over_IDs</span>
+<span class="p">]</span>
+
+<span class="n">ja</span><span class="o">.</span><span class="n">display_list</span><span class="p">([</span>
+    <span class="sa">f</span><span class="s2">&quot;balancing valve in cross-over </span><span class="si">{</span><span class="n">cross_over_ID</span><span class="si">}</span><span class="s2">: preliminary Kvs = </span><span class="si">{</span><span class="n">Kvs_pre</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="k">for</span> <span class="n">cross_over_ID</span><span class="p">,</span> <span class="n">Kvs_pre</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">cross_over_IDs</span><span class="p">,</span> <span class="n">Kvs_pre_list</span><span class="p">)]</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><ul><li>balancing valve in cross-over P5: preliminary Kvs = 1.2608467334744375</li><li>balancing valve in cross-over P6: preliminary Kvs = 3.782540200423313</li><li>balancing valve in cross-over P7: preliminary Kvs = 1.9016049095024303</li><li>balancing valve in cross-over P8: preliminary Kvs = 2.521693466948875</li></ul></div></div>
+</div>
+</section>
+<section id="balancing-valve-selection">
+<h3>Balancing Valve Selection<a class="headerlink" href="#balancing-valve-selection" title="Permalink to this headline">#</a></h3>
+<p>Based on the pipe size and preliminary Kvs a balancing valve can now be selected. In this example the following balancing valves were selected:</p>
+<ul class="simple">
+<li><p>cross-over P5: Kvs = 1.33</p></li>
+<li><p>cross-over P6: Kvs = 5.35</p></li>
+<li><p>cross-over P7: Kvs = 2.32</p></li>
+<li><p>cross-over P8: Kvs = 2.32</p></li>
+</ul>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">Kvs_list</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.33</span><span class="p">,</span> <span class="mf">5.35</span><span class="p">,</span> <span class="mf">2.32</span><span class="p">,</span> <span class="mf">2.32</span><span class="p">]</span>
+
+<span class="k">for</span> <span class="n">cross_over_ID</span><span class="p">,</span> <span class="n">Kvs</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">cross_over_IDs</span><span class="p">,</span> <span class="n">Kvs_list</span><span class="p">):</span>
+    <span class="n">pipe_network</span><span class="o">.</span><span class="n">set_balancing_valve_Kvs</span><span class="p">(</span><span class="n">cross_over_ID</span><span class="p">,</span> <span class="n">Kvs</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="add-control-valves-to-the-cross-overs">
+<h2>Add Control Valves to the Cross-Overs<a class="headerlink" href="#add-control-valves-to-the-cross-overs" title="Permalink to this headline">#</a></h2>
+<section id="id1">
+<h3>Calculate Preliminary Flow Coefficients<a class="headerlink" href="#id1" title="Permalink to this headline">#</a></h3>
+<p>The control valves in the cross-overs serve to control the volume flow rate through the heat emitters in the hydronic distribution system at part-load conditions. They are installed upstream of the heat emitter they control. First, a preliminary flow coefficient of the control valves is calculated based on a chosen target valve authority, which should be at least 0.5 in order to attain a good controllability of the valve.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">Kvs_pre_list</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">pipe_network</span><span class="o">.</span><span class="n">add_control_valve</span><span class="p">(</span>
+        <span class="n">cross_over_ID</span><span class="o">=</span><span class="n">cross_over_ID</span><span class="p">,</span> 
+        <span class="n">target_authority</span><span class="o">=</span><span class="mf">0.5</span>
+    <span class="p">)</span>
+    <span class="k">for</span> <span class="n">cross_over_ID</span> <span class="ow">in</span> <span class="n">cross_over_IDs</span>
+<span class="p">]</span>
+
+<span class="n">ja</span><span class="o">.</span><span class="n">display_list</span><span class="p">([</span>
+    <span class="sa">f</span><span class="s2">&quot;control valve in cross-over </span><span class="si">{</span><span class="n">cross_over_ID</span><span class="si">}</span><span class="s2">: preliminary Kvs = </span><span class="si">{</span><span class="n">Kvs_pre</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="k">for</span> <span class="n">cross_over_ID</span><span class="p">,</span> <span class="n">Kvs_pre</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">cross_over_IDs</span><span class="p">,</span> <span class="n">Kvs_pre_list</span><span class="p">)]</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><ul><li>control valve in cross-over P5: preliminary Kvs = 0.573935179185883</li><li>control valve in cross-over P6: preliminary Kvs = 1.721805537557649</li><li>control valve in cross-over P7: preliminary Kvs = 0.8656071554934628</li><li>control valve in cross-over P8: preliminary Kvs = 1.147870358371766</li></ul></div></div>
+</div>
+</section>
+<section id="control-valve-selection">
+<h3>Control Valve Selection<a class="headerlink" href="#control-valve-selection" title="Permalink to this headline">#</a></h3>
+<p>In the same way as we did with the balancing valves, the actual control valves can now be selected and their Kvs-values be entered in the program:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">Kvs_list</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.4</span><span class="p">,</span> <span class="mf">1.6</span><span class="p">,</span> <span class="mf">0.63</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]</span>
+
+<span class="k">for</span> <span class="n">cross_over_ID</span><span class="p">,</span> <span class="n">Kvs</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">cross_over_IDs</span><span class="p">,</span> <span class="n">Kvs_list</span><span class="p">):</span>
+    <span class="n">pipe_network</span><span class="o">.</span><span class="n">set_control_valve_Kvs</span><span class="p">(</span><span class="n">cross_over_ID</span><span class="p">,</span> <span class="n">Kvs</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="pipes-fittings-and-flow-paths-overview-bis">
+<h2>Pipes, Fittings and Flow Paths Overview (bis)<a class="headerlink" href="#pipes-fittings-and-flow-paths-overview-bis" title="Permalink to this headline">#</a></h2>
+<section id="id2">
+<h3>Pipes<a class="headerlink" href="#id2" title="Permalink to this headline">#</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ja</span><span class="o">.</span><span class="n">display_table</span><span class="p">(</span><span class="n">pipe_network</span><span class="o">.</span><span class="n">get_pipe_table</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div class="my_table"><table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>pipe ID</th>
+      <th>L [m]</th>
+      <th>DN [mm]</th>
+      <th>Di [mm]</th>
+      <th>V [l/s]</th>
+      <th>v [m/s]</th>
+      <th>zeta</th>
+      <th>Re</th>
+      <th>Δp-dyn. [kPa]</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>P1</td>
+      <td>4.0</td>
+      <td>35.0</td>
+      <td>32.0</td>
+      <td>0.458</td>
+      <td>0.569476</td>
+      <td>0.007096</td>
+      <td>32945.645835</td>
+      <td>0.463923</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>P2</td>
+      <td>2.0</td>
+      <td>28.0</td>
+      <td>25.0</td>
+      <td>0.397</td>
+      <td>0.808762</td>
+      <td>-0.011416</td>
+      <td>36553.841457</td>
+      <td>0.580797</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>P3</td>
+      <td>2.0</td>
+      <td>22.0</td>
+      <td>20.0</td>
+      <td>0.214</td>
+      <td>0.681183</td>
+      <td>-0.037437</td>
+      <td>24630.107279</td>
+      <td>0.559724</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>P4</td>
+      <td>2.0</td>
+      <td>18.0</td>
+      <td>16.0</td>
+      <td>0.122</td>
+      <td>0.606778</td>
+      <td>0.096462</td>
+      <td>17551.828785</td>
+      <td>0.629676</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>P5</td>
+      <td>25.0</td>
+      <td>18.0</td>
+      <td>14.0</td>
+      <td>0.061</td>
+      <td>0.396263</td>
+      <td>434.804239</td>
+      <td>10029.616449</td>
+      <td>38.028212</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>P6</td>
+      <td>25.0</td>
+      <td>26.0</td>
+      <td>20.0</td>
+      <td>0.183</td>
+      <td>0.582507</td>
+      <td>114.221187</td>
+      <td>21062.194542</td>
+      <td>24.538065</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>P7</td>
+      <td>15.0</td>
+      <td>20.0</td>
+      <td>16.0</td>
+      <td>0.092</td>
+      <td>0.457570</td>
+      <td>289.403891</td>
+      <td>13235.805313</td>
+      <td>32.734969</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>P8</td>
+      <td>20.0</td>
+      <td>20.0</td>
+      <td>16.0</td>
+      <td>0.122</td>
+      <td>0.606778</td>
+      <td>124.363416</td>
+      <td>17551.828785</td>
+      <td>28.742410</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>P9</td>
+      <td>2.0</td>
+      <td>18.0</td>
+      <td>16.0</td>
+      <td>0.122</td>
+      <td>0.606778</td>
+      <td>0.084951</td>
+      <td>17551.828785</td>
+      <td>0.627582</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>P10</td>
+      <td>2.0</td>
+      <td>22.0</td>
+      <td>20.0</td>
+      <td>0.214</td>
+      <td>0.681183</td>
+      <td>0.514415</td>
+      <td>24630.107279</td>
+      <td>0.686230</td>
+    </tr>
+    <tr>
+      <th>10</th>
+      <td>P11</td>
+      <td>2.0</td>
+      <td>28.0</td>
+      <td>25.0</td>
+      <td>0.397</td>
+      <td>0.808762</td>
+      <td>0.543084</td>
+      <td>36553.841457</td>
+      <td>0.759983</td>
+    </tr>
+    <tr>
+      <th>11</th>
+      <td>P12</td>
+      <td>4.0</td>
+      <td>35.0</td>
+      <td>32.0</td>
+      <td>0.458</td>
+      <td>0.569476</td>
+      <td>0.262696</td>
+      <td>32945.645835</td>
+      <td>0.504875</td>
+    </tr>
+  </tbody>
+</table></div></div></div>
+</div>
+</section>
+<section id="fittings-and-valves">
+<h3>Fittings and Valves<a class="headerlink" href="#fittings-and-valves" title="Permalink to this headline">#</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ja</span><span class="o">.</span><span class="n">display_table</span><span class="p">(</span><span class="n">pipe_network</span><span class="o">.</span><span class="n">get_fitting_table</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div class="my_table"><table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>conduit ID</th>
+      <th>fitting ID</th>
+      <th>zeta</th>
+      <th>pressure drop [kPa]</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>P1</td>
+      <td>TEE-S1</td>
+      <td>0.007096</td>
+      <td>0.001137</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>P2</td>
+      <td>TEE-S2</td>
+      <td>-0.033184</td>
+      <td>-0.010723</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>P2</td>
+      <td>RED-S1</td>
+      <td>0.021767</td>
+      <td>0.007034</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>P3</td>
+      <td>TEE-S3</td>
+      <td>-0.051819</td>
+      <td>-0.011879</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>P3</td>
+      <td>RED-S2</td>
+      <td>0.014382</td>
+      <td>0.003297</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>P4</td>
+      <td>RED-S3</td>
+      <td>0.011511</td>
+      <td>0.002094</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>P4</td>
+      <td>ELBOW-S4</td>
+      <td>0.084951</td>
+      <td>0.015452</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>P5</td>
+      <td>TEE-S1</td>
+      <td>16.014638</td>
+      <td>1.242356</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>P5</td>
+      <td>TEE-R1</td>
+      <td>-0.200008</td>
+      <td>-0.015516</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>P5</td>
+      <td>BAL-VLV-P5</td>
+      <td>34.754698</td>
+      <td>2.696141</td>
+    </tr>
+    <tr>
+      <th>10</th>
+      <td>P5</td>
+      <td>CTRL-VLV-P5</td>
+      <td>384.234911</td>
+      <td>29.807522</td>
+    </tr>
+    <tr>
+      <th>11</th>
+      <td>P6</td>
+      <td>TEE-S2</td>
+      <td>3.702657</td>
+      <td>0.620693</td>
+    </tr>
+    <tr>
+      <th>12</th>
+      <td>P6</td>
+      <td>TEE-R2</td>
+      <td>1.553274</td>
+      <td>0.260382</td>
+    </tr>
+    <tr>
+      <th>13</th>
+      <td>P6</td>
+      <td>BAL-VLV-P6</td>
+      <td>8.945757</td>
+      <td>1.499619</td>
+    </tr>
+    <tr>
+      <th>14</th>
+      <td>P6</td>
+      <td>CTRL-VLV-P6</td>
+      <td>100.019500</td>
+      <td>16.766731</td>
+    </tr>
+    <tr>
+      <th>15</th>
+      <td>P7</td>
+      <td>TEE-S3</td>
+      <td>4.149576</td>
+      <td>0.429221</td>
+    </tr>
+    <tr>
+      <th>16</th>
+      <td>P7</td>
+      <td>TEE-R3</td>
+      <td>1.525946</td>
+      <td>0.157840</td>
+    </tr>
+    <tr>
+      <th>17</th>
+      <td>P7</td>
+      <td>BAL-VLV-P7</td>
+      <td>19.485368</td>
+      <td>2.015514</td>
+    </tr>
+    <tr>
+      <th>18</th>
+      <td>P7</td>
+      <td>CTRL-VLV-P7</td>
+      <td>264.243001</td>
+      <td>27.332587</td>
+    </tr>
+    <tr>
+      <th>19</th>
+      <td>P8</td>
+      <td>BAL-VLV-P8</td>
+      <td>19.485368</td>
+      <td>3.544295</td>
+    </tr>
+    <tr>
+      <th>20</th>
+      <td>P8</td>
+      <td>CTRL-VLV-P8</td>
+      <td>104.878047</td>
+      <td>19.076814</td>
+    </tr>
+    <tr>
+      <th>21</th>
+      <td>P9</td>
+      <td>ELBOW-R4</td>
+      <td>0.084951</td>
+      <td>0.015452</td>
+    </tr>
+    <tr>
+      <th>22</th>
+      <td>P10</td>
+      <td>TEE-R3</td>
+      <td>0.481536</td>
+      <td>0.110387</td>
+    </tr>
+    <tr>
+      <th>23</th>
+      <td>P10</td>
+      <td>ENL-R3</td>
+      <td>0.032880</td>
+      <td>0.007537</td>
+    </tr>
+    <tr>
+      <th>24</th>
+      <td>P11</td>
+      <td>TEE-R2</td>
+      <td>0.502002</td>
+      <td>0.162221</td>
+    </tr>
+    <tr>
+      <th>25</th>
+      <td>P11</td>
+      <td>ENL-R2</td>
+      <td>0.041081</td>
+      <td>0.013275</td>
+    </tr>
+    <tr>
+      <th>26</th>
+      <td>P12</td>
+      <td>TEE-R1</td>
+      <td>0.188702</td>
+      <td>0.030234</td>
+    </tr>
+    <tr>
+      <th>27</th>
+      <td>P12</td>
+      <td>ENL-R1</td>
+      <td>0.073994</td>
+      <td>0.011855</td>
+    </tr>
+  </tbody>
+</table></div></div></div>
+</div>
+</section>
+<section id="id3">
+<h3>Flow Paths<a class="headerlink" href="#id3" title="Permalink to this headline">#</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ja</span><span class="o">.</span><span class="n">display_table</span><span class="p">(</span><span class="n">pipe_network</span><span class="o">.</span><span class="n">get_flow_path_table</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div class="my_table"><table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>path</th>
+      <th>Δp-elev. [kPa]</th>
+      <th>Δp-dyn. [kPa]</th>
+      <th>Δp-tot. [kPa]</th>
+      <th>Δp-deficit [kPa]</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>P1|P2|P3|P4|P8|P9|P10|P11|P12</td>
+      <td>0.0</td>
+      <td>33.555200</td>
+      <td>33.555200</td>
+      <td>5.441810</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>P1|P5|P12</td>
+      <td>0.0</td>
+      <td>38.997010</td>
+      <td>38.997010</td>
+      <td>0.000000</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>P1|P2|P6|P11|P12</td>
+      <td>0.0</td>
+      <td>26.847643</td>
+      <td>26.847643</td>
+      <td>12.149367</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>P1|P2|P3|P7|P10|P11|P12</td>
+      <td>0.0</td>
+      <td>36.290501</td>
+      <td>36.290501</td>
+      <td>2.706509</td>
+    </tr>
+  </tbody>
+</table></div></div></div>
+</div>
+</section>
+</section>
+<section id="statically-balance-the-network-for-design-volume-flow-rates">
+<h2>Statically Balance the Network for Design Volume Flow Rates<a class="headerlink" href="#statically-balance-the-network-for-design-volume-flow-rates" title="Permalink to this headline">#</a></h2>
+<p>To let the program balance the flow paths, simply call:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pipe_network</span><span class="o">.</span><span class="n">balance_network_at_design</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Now, we can check the required Kvr-settings of the balancing valves:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ja</span><span class="o">.</span><span class="n">display_table</span><span class="p">(</span><span class="n">pipe_network</span><span class="o">.</span><span class="n">get_balancing_valve_table</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div class="my_table"><table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>pipe ID</th>
+      <th>valve ID</th>
+      <th>Kvs</th>
+      <th>Kvr</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>P5</td>
+      <td>BAL-VLV-P5</td>
+      <td>1.33</td>
+      <td>1.330000</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>P6</td>
+      <td>BAL-VLV-P6</td>
+      <td>5.35</td>
+      <td>1.773348</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>P7</td>
+      <td>BAL-VLV-P7</td>
+      <td>2.32</td>
+      <td>1.515713</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>P8</td>
+      <td>BAL-VLV-P8</td>
+      <td>2.32</td>
+      <td>1.457026</td>
+    </tr>
+  </tbody>
+</table></div></div></div>
+</div>
+</section>
+<section id="pipes-fittings-and-flow-paths-overview-ter">
+<h2>Pipes, Fittings and Flow Paths Overview (ter)<a class="headerlink" href="#pipes-fittings-and-flow-paths-overview-ter" title="Permalink to this headline">#</a></h2>
+<section id="id4">
+<h3>Pipes<a class="headerlink" href="#id4" title="Permalink to this headline">#</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ja</span><span class="o">.</span><span class="n">display_table</span><span class="p">(</span><span class="n">pipe_network</span><span class="o">.</span><span class="n">get_pipe_table</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div class="my_table"><table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>pipe ID</th>
+      <th>L [m]</th>
+      <th>DN [mm]</th>
+      <th>Di [mm]</th>
+      <th>V [l/s]</th>
+      <th>v [m/s]</th>
+      <th>zeta</th>
+      <th>Re</th>
+      <th>Δp-dyn. [kPa]</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>P1</td>
+      <td>4.0</td>
+      <td>35.0</td>
+      <td>32.0</td>
+      <td>0.458</td>
+      <td>0.569476</td>
+      <td>0.007096</td>
+      <td>32945.645835</td>
+      <td>0.463923</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>P2</td>
+      <td>2.0</td>
+      <td>28.0</td>
+      <td>25.0</td>
+      <td>0.397</td>
+      <td>0.808762</td>
+      <td>-0.011416</td>
+      <td>36553.841457</td>
+      <td>0.580797</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>P3</td>
+      <td>2.0</td>
+      <td>22.0</td>
+      <td>20.0</td>
+      <td>0.214</td>
+      <td>0.681183</td>
+      <td>-0.037437</td>
+      <td>24630.107279</td>
+      <td>0.559724</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>P4</td>
+      <td>2.0</td>
+      <td>18.0</td>
+      <td>16.0</td>
+      <td>0.122</td>
+      <td>0.606778</td>
+      <td>0.096462</td>
+      <td>17551.828785</td>
+      <td>0.629676</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>P5</td>
+      <td>25.0</td>
+      <td>18.0</td>
+      <td>14.0</td>
+      <td>0.061</td>
+      <td>0.396263</td>
+      <td>434.804239</td>
+      <td>10029.616449</td>
+      <td>38.028212</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>P6</td>
+      <td>25.0</td>
+      <td>26.0</td>
+      <td>20.0</td>
+      <td>0.183</td>
+      <td>0.582507</td>
+      <td>186.696474</td>
+      <td>21062.194542</td>
+      <td>36.687432</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>P7</td>
+      <td>15.0</td>
+      <td>20.0</td>
+      <td>16.0</td>
+      <td>0.092</td>
+      <td>0.457570</td>
+      <td>315.569585</td>
+      <td>13235.805313</td>
+      <td>35.441478</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>P8</td>
+      <td>20.0</td>
+      <td>20.0</td>
+      <td>16.0</td>
+      <td>0.122</td>
+      <td>0.606778</td>
+      <td>154.280699</td>
+      <td>17551.828785</td>
+      <td>34.184220</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>P9</td>
+      <td>2.0</td>
+      <td>18.0</td>
+      <td>16.0</td>
+      <td>0.122</td>
+      <td>0.606778</td>
+      <td>0.084951</td>
+      <td>17551.828785</td>
+      <td>0.627582</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>P10</td>
+      <td>2.0</td>
+      <td>22.0</td>
+      <td>20.0</td>
+      <td>0.214</td>
+      <td>0.681183</td>
+      <td>0.514415</td>
+      <td>24630.107279</td>
+      <td>0.686230</td>
+    </tr>
+    <tr>
+      <th>10</th>
+      <td>P11</td>
+      <td>2.0</td>
+      <td>28.0</td>
+      <td>25.0</td>
+      <td>0.397</td>
+      <td>0.808762</td>
+      <td>0.543084</td>
+      <td>36553.841457</td>
+      <td>0.759983</td>
+    </tr>
+    <tr>
+      <th>11</th>
+      <td>P12</td>
+      <td>4.0</td>
+      <td>35.0</td>
+      <td>32.0</td>
+      <td>0.458</td>
+      <td>0.569476</td>
+      <td>0.262696</td>
+      <td>32945.645835</td>
+      <td>0.504875</td>
+    </tr>
+  </tbody>
+</table></div></div></div>
+</div>
+</section>
+<section id="id5">
+<h3>Fittings and Valves<a class="headerlink" href="#id5" title="Permalink to this headline">#</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ja</span><span class="o">.</span><span class="n">display_table</span><span class="p">(</span><span class="n">pipe_network</span><span class="o">.</span><span class="n">get_fitting_table</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div class="my_table"><table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>conduit ID</th>
+      <th>fitting ID</th>
+      <th>zeta</th>
+      <th>pressure drop [kPa]</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>P1</td>
+      <td>TEE-S1</td>
+      <td>0.007096</td>
+      <td>0.001137</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>P2</td>
+      <td>TEE-S2</td>
+      <td>-0.033184</td>
+      <td>-0.010723</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>P2</td>
+      <td>RED-S1</td>
+      <td>0.021767</td>
+      <td>0.007034</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>P3</td>
+      <td>TEE-S3</td>
+      <td>-0.051819</td>
+      <td>-0.011879</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>P3</td>
+      <td>RED-S2</td>
+      <td>0.014382</td>
+      <td>0.003297</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>P4</td>
+      <td>RED-S3</td>
+      <td>0.011511</td>
+      <td>0.002094</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>P4</td>
+      <td>ELBOW-S4</td>
+      <td>0.084951</td>
+      <td>0.015452</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>P5</td>
+      <td>TEE-S1</td>
+      <td>16.014638</td>
+      <td>1.242356</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>P5</td>
+      <td>TEE-R1</td>
+      <td>-0.200008</td>
+      <td>-0.015516</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>P5</td>
+      <td>BAL-VLV-P5</td>
+      <td>34.754698</td>
+      <td>2.696141</td>
+    </tr>
+    <tr>
+      <th>10</th>
+      <td>P5</td>
+      <td>CTRL-VLV-P5</td>
+      <td>384.234911</td>
+      <td>29.807522</td>
+    </tr>
+    <tr>
+      <th>11</th>
+      <td>P6</td>
+      <td>TEE-S2</td>
+      <td>3.702657</td>
+      <td>0.620693</td>
+    </tr>
+    <tr>
+      <th>12</th>
+      <td>P6</td>
+      <td>TEE-R2</td>
+      <td>1.553274</td>
+      <td>0.260382</td>
+    </tr>
+    <tr>
+      <th>13</th>
+      <td>P6</td>
+      <td>BAL-VLV-P6</td>
+      <td>81.421043</td>
+      <td>13.648986</td>
+    </tr>
+    <tr>
+      <th>14</th>
+      <td>P6</td>
+      <td>CTRL-VLV-P6</td>
+      <td>100.019500</td>
+      <td>16.766731</td>
+    </tr>
+    <tr>
+      <th>15</th>
+      <td>P7</td>
+      <td>TEE-S3</td>
+      <td>4.149576</td>
+      <td>0.429221</td>
+    </tr>
+    <tr>
+      <th>16</th>
+      <td>P7</td>
+      <td>TEE-R3</td>
+      <td>1.525946</td>
+      <td>0.157840</td>
+    </tr>
+    <tr>
+      <th>17</th>
+      <td>P7</td>
+      <td>BAL-VLV-P7</td>
+      <td>45.651062</td>
+      <td>4.722023</td>
+    </tr>
+    <tr>
+      <th>18</th>
+      <td>P7</td>
+      <td>CTRL-VLV-P7</td>
+      <td>264.243001</td>
+      <td>27.332587</td>
+    </tr>
+    <tr>
+      <th>19</th>
+      <td>P8</td>
+      <td>BAL-VLV-P8</td>
+      <td>49.402652</td>
+      <td>8.986105</td>
+    </tr>
+    <tr>
+      <th>20</th>
+      <td>P8</td>
+      <td>CTRL-VLV-P8</td>
+      <td>104.878047</td>
+      <td>19.076814</td>
+    </tr>
+    <tr>
+      <th>21</th>
+      <td>P9</td>
+      <td>ELBOW-R4</td>
+      <td>0.084951</td>
+      <td>0.015452</td>
+    </tr>
+    <tr>
+      <th>22</th>
+      <td>P10</td>
+      <td>TEE-R3</td>
+      <td>0.481536</td>
+      <td>0.110387</td>
+    </tr>
+    <tr>
+      <th>23</th>
+      <td>P10</td>
+      <td>ENL-R3</td>
+      <td>0.032880</td>
+      <td>0.007537</td>
+    </tr>
+    <tr>
+      <th>24</th>
+      <td>P11</td>
+      <td>TEE-R2</td>
+      <td>0.502002</td>
+      <td>0.162221</td>
+    </tr>
+    <tr>
+      <th>25</th>
+      <td>P11</td>
+      <td>ENL-R2</td>
+      <td>0.041081</td>
+      <td>0.013275</td>
+    </tr>
+    <tr>
+      <th>26</th>
+      <td>P12</td>
+      <td>TEE-R1</td>
+      <td>0.188702</td>
+      <td>0.030234</td>
+    </tr>
+    <tr>
+      <th>27</th>
+      <td>P12</td>
+      <td>ENL-R1</td>
+      <td>0.073994</td>
+      <td>0.011855</td>
+    </tr>
+  </tbody>
+</table></div></div></div>
+</div>
+</section>
+<section id="id6">
+<h3>Flow Paths<a class="headerlink" href="#id6" title="Permalink to this headline">#</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ja</span><span class="o">.</span><span class="n">display_table</span><span class="p">(</span><span class="n">pipe_network</span><span class="o">.</span><span class="n">get_flow_path_table</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div class="my_table"><table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>path</th>
+      <th>Δp-elev. [kPa]</th>
+      <th>Δp-dyn. [kPa]</th>
+      <th>Δp-tot. [kPa]</th>
+      <th>Δp-deficit [kPa]</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>P1|P2|P3|P4|P8|P9|P10|P11|P12</td>
+      <td>0.0</td>
+      <td>38.99701</td>
+      <td>38.99701</td>
+      <td>0.000000e+00</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>P1|P5|P12</td>
+      <td>0.0</td>
+      <td>38.99701</td>
+      <td>38.99701</td>
+      <td>7.275958e-15</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>P1|P2|P6|P11|P12</td>
+      <td>0.0</td>
+      <td>38.99701</td>
+      <td>38.99701</td>
+      <td>7.275958e-15</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>P1|P2|P3|P7|P10|P11|P12</td>
+      <td>0.0</td>
+      <td>38.99701</td>
+      <td>38.99701</td>
+      <td>1.455192e-14</td>
+    </tr>
+  </tbody>
+</table></div></div></div>
+</div>
+</section>
+</section>
+<section id="checking-control-valve-authorities">
+<h2>Checking Control Valve Authorities<a class="headerlink" href="#checking-control-valve-authorities" title="Permalink to this headline">#</a></h2>
+<p>Finally, we can check the authority of the control valves in the balanced network. The authority of a modulating control valve should not be smaller than 0.25.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ja</span><span class="o">.</span><span class="n">display_table</span><span class="p">(</span><span class="n">pipe_network</span><span class="o">.</span><span class="n">get_control_valve_table</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div class="my_table"><table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>pipe ID</th>
+      <th>valve ID</th>
+      <th>Kvs</th>
+      <th>authority</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>P5</td>
+      <td>CTRL-VLV-P5</td>
+      <td>0.40</td>
+      <td>0.764354</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>P6</td>
+      <td>CTRL-VLV-P6</td>
+      <td>1.60</td>
+      <td>0.429949</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>P7</td>
+      <td>CTRL-VLV-P7</td>
+      <td>0.63</td>
+      <td>0.700889</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>P8</td>
+      <td>CTRL-VLV-P8</td>
+      <td>1.00</td>
+      <td>0.489187</td>
+    </tr>
+  </tbody>
+</table></div></div></div>
+</div>
+</section>
+<section id="drawing-the-system-curve-of-the-network">
+<h2>Drawing the System Curve of the Network<a class="headerlink" href="#drawing-the-system-curve-of-the-network" title="Permalink to this headline">#</a></h2>
+<p>Between the start and the end node of the balanced pipe network the pressure difference will be equal to the pressure loss along the critical path. As the network is balanced, each flow path between the start and the end node of the network creates the same pressure loss, as can be seen in the flow path table above. The ratio of the pressure difference to the square of the volume flow rate that enters the network through the start node (and leaves through the end node) is a measure of the hydraulic resistance of the balanced network. If the volume flow rate into the network at the start node of the network changes, the hydraulic resistance of the network remains the same, and as such the pressure difference between the start node and the end node of the network will change accordingly to the square of the volume flow rate. This relationship between the volume flow rate into (and out of) the network and the pressure difference across the hydraulic resistance of the pipe network is graphically presented by the system curve. However, if a control valve in the network changes its opening, the hydraulic resistance of the network will change, and as such the system curve will also change accordingly. Also, the network won’t be (perfectly) balanced anymore, meaning that volume flow rates through other cross-overs will also inevitably change. This will be demonstrated in a subsequent notebook.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">hvac.fluid_flow.utils</span> <span class="kn">import</span> <span class="n">SystemCurve</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">system_curve</span> <span class="o">=</span> <span class="n">SystemCurve</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">pipe_network</span><span class="o">.</span><span class="n">hydraulic_resistance</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">diagram</span> <span class="o">=</span> <span class="n">system_curve</span><span class="o">.</span><span class="n">diagram</span><span class="p">(</span>
+    <span class="n">V_ini</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="s1">&#39;L / s&#39;</span><span class="p">),</span>
+    <span class="n">V_fin</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="s1">&#39;L / s&#39;</span><span class="p">),</span>
+    <span class="n">V_design</span><span class="o">=</span><span class="n">pipe_network</span><span class="o">.</span><span class="n">volume_flow_rate</span><span class="p">,</span>
+    <span class="n">no_points</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span>
+    <span class="n">fig_size</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span>
+    <span class="n">dpi</span><span class="o">=</span><span class="mi">96</span><span class="p">,</span>
+    <span class="n">V_step</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mf">0.05</span><span class="p">,</span> <span class="s1">&#39;L / s&#39;</span><span class="p">),</span>
+    <span class="n">V_max</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mf">0.65</span><span class="p">,</span> <span class="s1">&#39;L / s&#39;</span><span class="p">),</span>
+    <span class="n">dP_step</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mf">5.0</span><span class="p">,</span> <span class="s1">&#39;kPa&#39;</span><span class="p">),</span>
+    <span class="n">dP_max</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mf">50.0</span><span class="p">,</span> <span class="s1">&#39;kPa&#39;</span><span class="p">),</span>
+    <span class="n">V_unit</span><span class="o">=</span><span class="s1">&#39;L / s&#39;</span><span class="p">,</span>
+    <span class="n">dP_unit</span><span class="o">=</span><span class="s1">&#39;kPa&#39;</span>
+<span class="p">)</span>
+<span class="n">diagram</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/closed_pipe_network_design_99_0.png" src="_images/closed_pipe_network_design_99_0.png" />
+</div>
+</div>
+</section>
+<section id="save-the-pipe-network-for-later">
+<h2>Save the Pipe Network for Later<a class="headerlink" href="#save-the-pipe-network-for-later" title="Permalink to this headline">#</a></h2>
+<p>We will use this hydronic pipe network again in a subsequent notebook in which we will analyze the effect of closing control valves on the volume flow rates in the pipe network. Therefore, we save this pipe network on disk.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">hvac.fluid_flow.network</span> <span class="kn">import</span> <span class="n">save_network</span>
+
+<span class="n">save_network</span><span class="p">(</span><span class="n">pipe_network</span><span class="p">,</span> <span class="s2">&quot;./networks/hydronic_network.pickle&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            kernelName: "python3",
+            path: "./."
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+              </div>
+              
+            </main>
+            <footer class="footer-article noprint">
+                
+    <!-- Previous / next buttons -->
+<div class='prev-next-area'>
+    <a class='left-prev' id="prev-link" href="single_duct.html" title="previous page">
+        <i class="fas fa-angle-left"></i>
+        <div class="prev-next-info">
+            <p class="prev-next-subtitle">previous</p>
+            <p class="prev-next-title">Air Flow through a Duct</p>
+        </div>
+    </a>
+    <a class='right-next' id="next-link" href="closed_pipe_network_analysis.html" title="next page">
+    <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Analysis of the Hydronic Network</p>
+    </div>
+    <i class="fas fa-angle-right"></i>
+    </a>
+</div>
+            </footer>
+        </div>
+    </div>
+    <div class="footer-content row">
+        <footer class="col footer"><p>
+  
+    By Tom Christiaens<br/>
+  
+      &copy; Copyright 2022.<br/>
+</p>
+        </footer>
+    </div>
+    
+</div>
+
+
+      </div>
+    </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+
+
+  </body>
+</html>
