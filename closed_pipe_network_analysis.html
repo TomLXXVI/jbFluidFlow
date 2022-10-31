@@ -1,0 +1,1470 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Analysis of the Hydronic Network &#8212; Pipe and Duct Flow Calculations with Python</title>
+    
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+<link href="_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+
+    
+  <link rel="stylesheet"
+    href="_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" href="_static/styles/sphinx-book-theme.css?digest=5115cc725059bd94278eecd172e13a965bf8f5a9" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="_static/design-style.b7bb847fb20b106c3d81b95245e65545.min.css" />
+    
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/clipboard.min.js"></script>
+    <script src="_static/copybutton.js"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?digest=9c920249402e914e316237a7dbc6769907cce411"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
+    <script src="_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="_static/sphinx-thebe.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Design of a Hydronic Pipe Network" href="closed_pipe_network_design.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="None">
+    
+
+    <!-- Google Analytics -->
+    
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
+<!-- Checkboxes to toggle the left sidebar -->
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle navigation sidebar">
+<label class="overlay overlay-navbar" for="__navigation">
+    <div class="visually-hidden">Toggle navigation sidebar</div>
+</label>
+<!-- Checkboxes to toggle the in-page toc -->
+<input type="checkbox" class="sidebar-toggle" name="__page-toc" id="__page-toc" aria-label="Toggle in-page Table of Contents">
+<label class="overlay overlay-pagetoc" for="__page-toc">
+    <div class="visually-hidden">Toggle in-page Table of Contents</div>
+</label>
+<!-- Headers at the top -->
+<div class="announcement header-item noprint"></div>
+<div class="header header-item noprint"></div>
+
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<!-- Sidebar -->
+<div class="bd-sidebar noprint" id="site-navigation">
+    <div class="bd-sidebar__content">
+        <div class="bd-sidebar__top"><div class="navbar-brand-box">
+    <a class="navbar-brand text-wrap" href="index.html">
+      
+        <!-- `logo` is deprecated in Sphinx 4.0, so remove this when we stop supporting 3 -->
+        
+      
+      
+      <img src="_static/logo.png" class="logo" alt="logo">
+      
+      
+      <h1 class="site-logo" id="site-title">Pipe and Duct Flow Calculations with Python</h1>
+      
+    </a>
+</div><form class="bd-search d-flex align-items-center" action="search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search this book..." aria-label="Search this book..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="intro.html">
+                    Pipe and Duct Flow Calculations with Python
+                </a>
+            </li>
+        </ul>
+        <ul class="current nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="single_duct.html">
+   Air Flow through a Duct
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="closed_pipe_network_design.html">
+   Design of a Hydronic Pipe Network
+  </a>
+ </li>
+ <li class="toctree-l1 current active">
+  <a class="current reference internal" href="#">
+   Analysis of the Hydronic Network
+  </a>
+ </li>
+</ul>
+
+    </div>
+</nav></div>
+        <div class="bd-sidebar__bottom">
+             <!-- To handle the deprecated key -->
+            
+            <div class="navbar_extra_footer">
+            Powered by <a href="https://jupyterbook.org">Jupyter Book</a>
+            </div>
+            
+        </div>
+    </div>
+    <div id="rtd-footer-container"></div>
+</div>
+
+
+          
+
+
+          
+<!-- A tiny helper pixel to detect if we've scrolled -->
+<div class="sbt-scroll-pixel-helper"></div>
+<!-- Main content -->
+<div class="col py-0 content-container">
+    
+    <div class="header-article row sticky-top noprint">
+        
+
+
+
+<div class="col py-1 d-flex header-article-main">
+    <div class="header-article__left">
+        
+        <label for="__navigation"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="right"
+title="Toggle navigation"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-bars"></i>
+  </span>
+
+</label>
+
+        
+    </div>
+    <div class="header-article__right">
+<div class="menu-dropdown menu-dropdown-launch-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Launch interactive content">
+      <i class="fas fa-rocket"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="https://mybinder.org/v2/gh/TomLXXVI/jbFluidFlow/master?urlpath=tree/closed_pipe_network_analysis.ipynb"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Launch on Binder"
+>
+  
+
+<span class="headerbtn__icon-container">
+  
+    <img src="_static/images/logo_binder.svg">
+  </span>
+<span class="headerbtn__text-container">Binder</span>
+</a>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+
+<button onclick="toggleFullScreen()"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="bottom"
+title="Fullscreen mode"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+<div class="menu-dropdown menu-dropdown-repository-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Source repositories">
+      <i class="fab fa-github"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="https://github.com/TomLXXVI/jbFluidFlow"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Source repository"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="headerbtn__text-container">repository</span>
+</a>
+
+      </li>
+      
+      <li>
+        <a href="https://github.com/TomLXXVI/jbFluidFlow/issues/new?title=Issue%20on%20page%20%2Fclosed_pipe_network_analysis.html&body=Your%20issue%20content%20here."
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Open an issue"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="headerbtn__text-container">open issue</span>
+</a>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+
+<div class="menu-dropdown menu-dropdown-download-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Download this page">
+      <i class="fas fa-download"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="_sources/closed_pipe_network_analysis.ipynb"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Download source file"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="headerbtn__text-container">.ipynb</span>
+</a>
+
+      </li>
+      
+      <li>
+        
+<button onclick="printPdf(this)"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="left"
+title="Print to PDF"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="headerbtn__text-container">.pdf</span>
+</button>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+<label for="__page-toc"
+  class="headerbtn headerbtn-page-toc"
+  
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-list"></i>
+  </span>
+
+</label>
+
+    </div>
+</div>
+
+<!-- Table of contents -->
+<div class="col-md-3 bd-toc show noprint">
+    <div class="tocsection onthispage pt-5 pb-3">
+        <i class="fas fa-list"></i> Contents
+    </div>
+    <nav id="bd-toc-nav" aria-label="Page">
+        <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#let-s-import-what-we-ll-need">
+   Let’s Import What We’ll Need
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#load-the-hydronic-network-back-into-this-notebook">
+   Load the Hydronic Network back into this Notebook
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#add-a-pseudo-conduit-with-a-fixed-pressure-difference">
+   Add a Pseudo Conduit with a Fixed Pressure Difference
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#more-about-loops">
+   More about Loops
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#analyze-the-pipe-network">
+   Analyze the Pipe Network
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#hydraulic-resistance-of-pipe-network">
+     Hydraulic Resistance of Pipe Network
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#effect-of-closing-control-valves">
+   Effect of Closing Control Valves
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#comparing-volume-flow-rates">
+     Comparing volume flow rates
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#id1">
+     Hydraulic Resistance of Pipe Network
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#plot-the-system-curves">
+   Plot the System Curves
+  </a>
+ </li>
+</ul>
+
+    </nav>
+</div>
+    </div>
+    <div class="article row">
+        <div class="col pl-md-3 pl-lg-5 content-container">
+            <!-- Table of contents that is only displayed when printing the page -->
+            <div id="jb-print-docs-body" class="onlyprint">
+                <h1>Analysis of the Hydronic Network</h1>
+                <!-- Table of contents -->
+                <div id="print-main-content">
+                    <div id="jb-print-toc">
+                        
+                        <div>
+                            <h2> Contents </h2>
+                        </div>
+                        <nav aria-label="Page">
+                            <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#let-s-import-what-we-ll-need">
+   Let’s Import What We’ll Need
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#load-the-hydronic-network-back-into-this-notebook">
+   Load the Hydronic Network back into this Notebook
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#add-a-pseudo-conduit-with-a-fixed-pressure-difference">
+   Add a Pseudo Conduit with a Fixed Pressure Difference
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#more-about-loops">
+   More about Loops
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#analyze-the-pipe-network">
+   Analyze the Pipe Network
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#hydraulic-resistance-of-pipe-network">
+     Hydraulic Resistance of Pipe Network
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#effect-of-closing-control-valves">
+   Effect of Closing Control Valves
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#comparing-volume-flow-rates">
+     Comparing volume flow rates
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#id1">
+     Hydraulic Resistance of Pipe Network
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#plot-the-system-curves">
+   Plot the System Curves
+  </a>
+ </li>
+</ul>
+
+                        </nav>
+                    </div>
+                </div>
+            </div>
+            <main id="main-content" role="main">
+                
+              <div>
+                
+  <section class="tex2jax_ignore mathjax_ignore" id="analysis-of-the-hydronic-network">
+<h1>Analysis of the Hydronic Network<a class="headerlink" href="#analysis-of-the-hydronic-network" title="Permalink to this headline">#</a></h1>
+<hr class="docutils" />
+<section id="let-s-import-what-we-ll-need">
+<h2>Let’s Import What We’ll Need<a class="headerlink" href="#let-s-import-what-we-ll-need" title="Permalink to this headline">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">hvac</span> <span class="kn">import</span> <span class="n">Quantity</span>
+<span class="kn">from</span> <span class="nn">hvac.fluid_flow</span> <span class="kn">import</span> <span class="n">load_network</span><span class="p">,</span> <span class="n">PseudoConduit</span><span class="p">,</span> <span class="n">SystemCurve</span>
+<span class="kn">from</span> <span class="nn">hvac.fluid_flow.utils</span> <span class="kn">import</span> <span class="n">plot_curves</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">Q_</span> <span class="o">=</span> <span class="n">Quantity</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="load-the-hydronic-network-back-into-this-notebook">
+<h2>Load the Hydronic Network back into this Notebook<a class="headerlink" href="#load-the-hydronic-network-back-into-this-notebook" title="Permalink to this headline">#</a></h2>
+<p>In the previous notebook “Design of a Hydronic Network” we saved our <code class="docutils literal notranslate"><span class="pre">PipeNetwork</span></code> object on the file path:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">file_path</span> <span class="o">=</span> <span class="s2">&quot;./networks/hydronic_network.pickle&quot;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Now, let’s load this object again from disk:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pipe_network</span> <span class="o">=</span> <span class="n">load_network</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="add-a-pseudo-conduit-with-a-fixed-pressure-difference">
+<h2>Add a Pseudo Conduit with a Fixed Pressure Difference<a class="headerlink" href="#add-a-pseudo-conduit-with-a-fixed-pressure-difference" title="Permalink to this headline">#</a></h2>
+<p>A pseudo conduit, as the name suggests, is not a real conduit in a pipe network. We use it to represent a fixed pressure difference between two nodes.</p>
+<p><img alt="scheme" src="_images/hydronic_network.png" /></p>
+<p>From the design of the hydronic pipe network it follows that we need a pressure difference of about 39 kPa between end node R0 and start node S0 to establish the design volume flow rates in the pipe network. In order to analyze the pipe network, we add a <code class="docutils literal notranslate"><span class="pre">PseudoConduit</span></code> object between the end node and the start node of the network with a fixed pressure difference of 39 kPa.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pseudo_conduit</span> <span class="o">=</span> <span class="n">PseudoConduit</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">fixed_pressure_drop</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="o">-</span><span class="mi">39</span><span class="p">,</span> <span class="s1">&#39;kPa&#39;</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>The start node of the network is at a pressure that is 39 kPa higher than the pressure at the end node of the network. If there would be a real conduit between the start and the end node of the network, there would be a flow of water from the start node towards the end node. The direction of this flow would be opposite to the positive, clock-wise sense of the loop L1, as can be deduced from the scheme above. This is the reason why we need to add a minus sign. It can also be noticed that the fixed pressure difference between the end node and the start node is a pressure rise rather than a pressure drop.</p>
+<p>After the pseudo conduit has been created, we still need to add it to the network:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pipe_network</span><span class="o">.</span><span class="n">add_conduit</span><span class="p">(</span>
+    <span class="n">conduit</span><span class="o">=</span><span class="n">pseudo_conduit</span><span class="p">,</span>
+    <span class="n">conduit_ID</span><span class="o">=</span><span class="s1">&#39;P13&#39;</span><span class="p">,</span>
+    <span class="n">start_node_ID</span><span class="o">=</span><span class="s1">&#39;R0&#39;</span><span class="p">,</span>
+    <span class="n">end_node_ID</span><span class="o">=</span><span class="s1">&#39;S0&#39;</span><span class="p">,</span>
+    <span class="n">loop_ID</span><span class="o">=</span><span class="s1">&#39;L1&#39;</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="more-about-loops">
+<h2>More about Loops<a class="headerlink" href="#more-about-loops" title="Permalink to this headline">#</a></h2>
+<p>Before we move on, let’s first go back to the pipe configuration csv-file that we discussed in the notebook “Design of a Hydronic Network” and which is displayed again below:</p>
+<div class="cell tag_hide-input docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+<span class="n">table</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;./networks/ex1_closed-pipe-network-design.csv&#39;</span><span class="p">)</span>
+<span class="n">ja</span><span class="o">.</span><span class="n">display_table</span><span class="p">(</span><span class="n">table</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div class="my_table"><table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>conduit_ID</th>
+      <th>start_node_ID</th>
+      <th>end_node_ID</th>
+      <th>loop_ID</th>
+      <th>schedule</th>
+      <th>length</th>
+      <th>volume_flow_rate</th>
+      <th>specific_pressure_drop</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>P1</td>
+      <td>S0</td>
+      <td>S1</td>
+      <td>L1</td>
+      <td>copper</td>
+      <td>4</td>
+      <td>0.458</td>
+      <td>0.2</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>P2</td>
+      <td>S1</td>
+      <td>S2</td>
+      <td>L2</td>
+      <td>copper</td>
+      <td>2</td>
+      <td>0.397</td>
+      <td>0.2</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>P3</td>
+      <td>S2</td>
+      <td>S3</td>
+      <td>L3</td>
+      <td>copper</td>
+      <td>2</td>
+      <td>0.214</td>
+      <td>0.2</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>P4</td>
+      <td>S3</td>
+      <td>S4</td>
+      <td>L4</td>
+      <td>copper</td>
+      <td>2</td>
+      <td>0.122</td>
+      <td>0.2</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>P5</td>
+      <td>S1</td>
+      <td>R1</td>
+      <td>(L1, L2)</td>
+      <td>pex</td>
+      <td>25</td>
+      <td>0.061</td>
+      <td>0.2</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>P6</td>
+      <td>S2</td>
+      <td>R2</td>
+      <td>(L2, L3)</td>
+      <td>pex</td>
+      <td>25</td>
+      <td>0.183</td>
+      <td>0.2</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>P7</td>
+      <td>S3</td>
+      <td>R3</td>
+      <td>(L3, L4)</td>
+      <td>pex</td>
+      <td>15</td>
+      <td>0.092</td>
+      <td>0.2</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>P8</td>
+      <td>S4</td>
+      <td>R4</td>
+      <td>L4</td>
+      <td>pex</td>
+      <td>20</td>
+      <td>0.122</td>
+      <td>0.2</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>P9</td>
+      <td>R4</td>
+      <td>R3</td>
+      <td>L4</td>
+      <td>copper</td>
+      <td>2</td>
+      <td>0.122</td>
+      <td>0.2</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>P10</td>
+      <td>R3</td>
+      <td>R2</td>
+      <td>L3</td>
+      <td>copper</td>
+      <td>2</td>
+      <td>0.214</td>
+      <td>0.2</td>
+    </tr>
+    <tr>
+      <th>10</th>
+      <td>P11</td>
+      <td>R2</td>
+      <td>R1</td>
+      <td>L2</td>
+      <td>copper</td>
+      <td>2</td>
+      <td>0.397</td>
+      <td>0.2</td>
+    </tr>
+    <tr>
+      <th>11</th>
+      <td>P12</td>
+      <td>R1</td>
+      <td>R0</td>
+      <td>L1</td>
+      <td>copper</td>
+      <td>4</td>
+      <td>0.458</td>
+      <td>0.2</td>
+    </tr>
+  </tbody>
+</table></div></div></div>
+</div>
+<p>Inside the column <em>loop_ID</em>, we have specified the loop or loops to which each pipe in the network belongs. For example, pipe 5 belongs to two loops L1 and L2. You must enter the two loop IDs between brackets and separate them with a comma, otherwise the program will give an error.</p>
+<p>The sense of the volume flow rates in the pipes is referenced to the sense of the loop the pipes belong to. By convention a clock-wise loop sense is considered to be positive. If the arrow of the volume flow rate in a pipe points in the same direction as the loop arrow, the volume flow rate has a positive sign, otherwise you must give it a negative sign. In the case a pipe belongs to two loops, the sign of the volume flow rate is referenced to the positive sense of the first mentioned loop. In the second loop the flow sign will always be opposite to the flow sign in the first loop, as can be observed in the network scheme above.</p>
+</section>
+<section id="analyze-the-pipe-network">
+<h2>Analyze the Pipe Network<a class="headerlink" href="#analyze-the-pipe-network" title="Permalink to this headline">#</a></h2>
+<p>Once alle pipes have been assigned a loop ID, or two loop IDs, and the pseudo conduit has been added between the end node and the start node of the network, we can let the program analyze the network with the Hardy Cross method:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">i</span> <span class="o">=</span> <span class="n">pipe_network</span><span class="o">.</span><span class="n">analyze</span><span class="p">(</span><span class="n">tolerance</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;Pa&#39;</span><span class="p">),</span> <span class="n">i_max</span><span class="o">=</span><span class="mi">500</span><span class="p">)</span>
+<span class="n">i</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>12
+</pre></div>
+</div>
+</div>
+</div>
+<p>The Hardy Cross method is an iterative solution method to find the volume flow rates in a fluid network. The aim is to find the volume flow rate in each pipe of the network, such that the sum of the pressure differences across the pipes in each loop of the network becomes zero (as demanded by the physical law about conservation of energy). As it may take numerous iterations to find a solution for which the loop pressure differences all become exactly zero, a stop criterium is provided by the <code class="docutils literal notranslate"><span class="pre">tolerance</span></code> parameter. A tolerance of 1 Pa means that the <code class="docutils literal notranslate"><span class="pre">analyze</span></code> method will stop when all loop pressure differences are between 0 and 1 Pa. The parameter <code class="docutils literal notranslate"><span class="pre">i_max</span></code> sets the maximum number of iterations. If no solution has been found within <code class="docutils literal notranslate"><span class="pre">i_max</span></code> iterations, an <code class="docutils literal notranslate"><span class="pre">OverflowError</span></code> excepction will be raised to alert that no solution could be found that fulfills the stop criterium. The volume flow rates we entered in the pipe configuration file are used by the program as an initial guess to start the iterative solving process. Here we use the design flow rates for which we have sized the network.</p>
+<blockquote>
+<div><p><strong>IMPORTANT!</strong><br>
+When we choose a volume flow rate for each pipe in the network, we must make sure that the sum of the flow rates that arrive at a node is equal to the sum of the flow rates that leave at this same node (as demanded by the physical law about conservation of mass).</p>
+</div></blockquote>
+<p>When the <code class="docutils literal notranslate"><span class="pre">analyze</span></code> method is finished and has returned, we can take a look at the results:</p>
+<div class="cell tag_hide-input docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pipe_table1</span> <span class="o">=</span> <span class="n">pipe_network</span><span class="o">.</span><span class="n">get_pipe_table</span><span class="p">()</span>
+<span class="n">ja</span><span class="o">.</span><span class="n">display_table</span><span class="p">(</span><span class="n">pipe_table1</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div class="my_table"><table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>pipe ID</th>
+      <th>L [m]</th>
+      <th>DN [mm]</th>
+      <th>Di [mm]</th>
+      <th>V [l/s]</th>
+      <th>v [m/s]</th>
+      <th>zeta</th>
+      <th>Re</th>
+      <th>Δp-dyn. [kPa]</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>P1</td>
+      <td>4.0</td>
+      <td>35.0</td>
+      <td>32.0</td>
+      <td>0.458009</td>
+      <td>0.569488</td>
+      <td>0.007096</td>
+      <td>32946.314459</td>
+      <td>0.463940</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>P2</td>
+      <td>2.0</td>
+      <td>28.0</td>
+      <td>25.0</td>
+      <td>0.397008</td>
+      <td>0.808777</td>
+      <td>-0.011416</td>
+      <td>36554.548492</td>
+      <td>0.580817</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>P3</td>
+      <td>2.0</td>
+      <td>22.0</td>
+      <td>20.0</td>
+      <td>0.214003</td>
+      <td>0.681194</td>
+      <td>-0.037437</td>
+      <td>24630.493799</td>
+      <td>0.559739</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>P4</td>
+      <td>2.0</td>
+      <td>18.0</td>
+      <td>16.0</td>
+      <td>0.122002</td>
+      <td>0.606788</td>
+      <td>0.096462</td>
+      <td>17552.098316</td>
+      <td>0.629693</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>P5</td>
+      <td>25.0</td>
+      <td>18.0</td>
+      <td>14.0</td>
+      <td>0.061002</td>
+      <td>0.396274</td>
+      <td>434.804239</td>
+      <td>10029.882171</td>
+      <td>38.030197</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>P6</td>
+      <td>25.0</td>
+      <td>26.0</td>
+      <td>20.0</td>
+      <td>0.183004</td>
+      <td>0.582521</td>
+      <td>186.696474</td>
+      <td>21062.691816</td>
+      <td>36.689134</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>P7</td>
+      <td>15.0</td>
+      <td>20.0</td>
+      <td>16.0</td>
+      <td>0.092001</td>
+      <td>0.457578</td>
+      <td>315.569585</td>
+      <td>13236.018933</td>
+      <td>35.442611</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>P8</td>
+      <td>20.0</td>
+      <td>20.0</td>
+      <td>16.0</td>
+      <td>0.122002</td>
+      <td>0.606788</td>
+      <td>154.280699</td>
+      <td>17552.098316</td>
+      <td>34.185247</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>P9</td>
+      <td>2.0</td>
+      <td>18.0</td>
+      <td>16.0</td>
+      <td>0.122002</td>
+      <td>0.606788</td>
+      <td>0.084951</td>
+      <td>17552.098316</td>
+      <td>0.627599</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>P10</td>
+      <td>2.0</td>
+      <td>22.0</td>
+      <td>20.0</td>
+      <td>0.214003</td>
+      <td>0.681194</td>
+      <td>0.514415</td>
+      <td>24630.493799</td>
+      <td>0.686250</td>
+    </tr>
+    <tr>
+      <th>10</th>
+      <td>P11</td>
+      <td>2.0</td>
+      <td>28.0</td>
+      <td>25.0</td>
+      <td>0.397008</td>
+      <td>0.808777</td>
+      <td>0.543084</td>
+      <td>36554.548492</td>
+      <td>0.760010</td>
+    </tr>
+    <tr>
+      <th>11</th>
+      <td>P12</td>
+      <td>4.0</td>
+      <td>35.0</td>
+      <td>32.0</td>
+      <td>0.458009</td>
+      <td>0.569488</td>
+      <td>0.262696</td>
+      <td>32946.314459</td>
+      <td>0.504894</td>
+    </tr>
+  </tbody>
+</table></div></div></div>
+</div>
+<p>As could have been expected, the volume flow rates are still close to the initial design values, as we have added a fixed pressure rise of 39 kPa that is close to what was calculated when designing the network and because we haven’t changed anything yet to the configuration of the pipe network.</p>
+<div class="cell tag_hide-input docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ja</span><span class="o">.</span><span class="n">display_table</span><span class="p">(</span><span class="n">pipe_network</span><span class="o">.</span><span class="n">get_flow_path_table</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div class="my_table"><table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>path</th>
+      <th>Δp-elev. [kPa]</th>
+      <th>Δp-dyn. [kPa]</th>
+      <th>Δp-tot. [kPa]</th>
+      <th>Δp-deficit [kPa]</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>P1|P2|P3|P4|P8|P9|P10|P11|P12</td>
+      <td>0.0</td>
+      <td>38.998188</td>
+      <td>38.998188</td>
+      <td>0.000843</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>P1|P5|P12</td>
+      <td>0.0</td>
+      <td>38.999031</td>
+      <td>38.999031</td>
+      <td>0.000000</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>P1|P2|P6|P11|P12</td>
+      <td>0.0</td>
+      <td>38.998794</td>
+      <td>38.998794</td>
+      <td>0.000237</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>P1|P2|P3|P7|P10|P11|P12</td>
+      <td>0.0</td>
+      <td>38.998260</td>
+      <td>38.998260</td>
+      <td>0.000771</td>
+    </tr>
+  </tbody>
+</table></div></div></div>
+</div>
+<section id="hydraulic-resistance-of-pipe-network">
+<h3>Hydraulic Resistance of Pipe Network<a class="headerlink" href="#hydraulic-resistance-of-pipe-network" title="Permalink to this headline">#</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ja</span><span class="o">.</span><span class="n">display_list</span><span class="p">([</span>
+    <span class="sa">f</span><span class="s2">&quot;network hydraulic resistance: &lt;b&gt;</span><span class="si">{</span><span class="n">pipe_network</span><span class="o">.</span><span class="n">hydraulic_resistance</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;Pa / (m ** 3 / s) ** 2&#39;</span><span class="p">)</span><span class="si">:</span><span class="s2">~P.5g</span><span class="si">}</span><span class="s2">&lt;/b&gt;&quot;</span>
+<span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><ul><li>network hydraulic resistance: <b>1.8591×10¹¹ Pa·s²/m⁶</b></li></ul></div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">system_curve1</span> <span class="o">=</span> <span class="n">SystemCurve</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">pipe_network</span><span class="o">.</span><span class="n">hydraulic_resistance</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;system curve 1&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>We will this <code class="docutils literal notranslate"><span class="pre">SystemCurve</span></code> object later on when we will display different system curves of the pipe network.</p>
+</section>
+</section>
+<section id="effect-of-closing-control-valves">
+<h2>Effect of Closing Control Valves<a class="headerlink" href="#effect-of-closing-control-valves" title="Permalink to this headline">#</a></h2>
+<p>What will happen to the volume flow rates in the network when we close the control valves in cross-overs P6 and P7 to 50 % opening? To find this out, we first set the valve opening of these control valves to 50 % of the fully open position:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pipe_network</span><span class="o">.</span><span class="n">set_control_valve_opening</span><span class="p">(</span><span class="s1">&#39;P6&#39;</span><span class="p">,</span> <span class="n">percent_open</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span>
+<span class="n">pipe_network</span><span class="o">.</span><span class="n">set_control_valve_opening</span><span class="p">(</span><span class="s1">&#39;P7&#39;</span><span class="p">,</span> <span class="n">percent_open</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Then we run the <code class="docutils literal notranslate"><span class="pre">analyze</span></code> method again:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">i</span> <span class="o">=</span> <span class="n">pipe_network</span><span class="o">.</span><span class="n">analyze</span><span class="p">(</span><span class="n">tolerance</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;Pa&#39;</span><span class="p">),</span> <span class="n">i_max</span><span class="o">=</span><span class="mi">500</span><span class="p">)</span>
+<span class="n">i</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>155
+</pre></div>
+</div>
+</div>
+</div>
+<p>Now can display the pipe table again, to check the volume flow rates in the network.</p>
+<div class="cell tag_hide-input docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pipe_table2</span> <span class="o">=</span> <span class="n">pipe_network</span><span class="o">.</span><span class="n">get_pipe_table</span><span class="p">()</span>
+<span class="n">ja</span><span class="o">.</span><span class="n">display_table</span><span class="p">(</span><span class="n">pipe_table2</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div class="my_table"><table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>pipe ID</th>
+      <th>L [m]</th>
+      <th>DN [mm]</th>
+      <th>Di [mm]</th>
+      <th>V [l/s]</th>
+      <th>v [m/s]</th>
+      <th>zeta</th>
+      <th>Re</th>
+      <th>Δp-dyn. [kPa]</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>P1</td>
+      <td>4.0</td>
+      <td>35.0</td>
+      <td>32.0</td>
+      <td>0.356759</td>
+      <td>0.443593</td>
+      <td>0.007096</td>
+      <td>25662.971166</td>
+      <td>0.298219</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>P2</td>
+      <td>2.0</td>
+      <td>28.0</td>
+      <td>25.0</td>
+      <td>0.295473</td>
+      <td>0.601933</td>
+      <td>-0.011416</td>
+      <td>27205.754582</td>
+      <td>0.344295</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>P3</td>
+      <td>2.0</td>
+      <td>22.0</td>
+      <td>20.0</td>
+      <td>0.175576</td>
+      <td>0.558877</td>
+      <td>-0.037437</td>
+      <td>20207.794106</td>
+      <td>0.395152</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>P4</td>
+      <td>2.0</td>
+      <td>18.0</td>
+      <td>16.0</td>
+      <td>0.124235</td>
+      <td>0.617895</td>
+      <td>0.096462</td>
+      <td>17873.388934</td>
+      <td>0.650165</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>P5</td>
+      <td>25.0</td>
+      <td>18.0</td>
+      <td>14.0</td>
+      <td>0.061285</td>
+      <td>0.398116</td>
+      <td>434.804239</td>
+      <td>10076.515197</td>
+      <td>38.379412</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>P6</td>
+      <td>25.0</td>
+      <td>26.0</td>
+      <td>20.0</td>
+      <td>0.119897</td>
+      <td>0.381643</td>
+      <td>486.754974</td>
+      <td>13799.399123</td>
+      <td>37.592559</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>P7</td>
+      <td>15.0</td>
+      <td>20.0</td>
+      <td>16.0</td>
+      <td>0.051341</td>
+      <td>0.255351</td>
+      <td>1108.298588</td>
+      <td>7386.353698</td>
+      <td>36.717880</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>P8</td>
+      <td>20.0</td>
+      <td>20.0</td>
+      <td>16.0</td>
+      <td>0.124235</td>
+      <td>0.617895</td>
+      <td>154.280699</td>
+      <td>17873.388934</td>
+      <td>35.420302</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>P9</td>
+      <td>2.0</td>
+      <td>18.0</td>
+      <td>16.0</td>
+      <td>0.124235</td>
+      <td>0.617895</td>
+      <td>0.084951</td>
+      <td>17873.388934</td>
+      <td>0.647994</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>P10</td>
+      <td>2.0</td>
+      <td>22.0</td>
+      <td>20.0</td>
+      <td>0.175576</td>
+      <td>0.558877</td>
+      <td>0.514415</td>
+      <td>20207.794106</td>
+      <td>0.480309</td>
+    </tr>
+    <tr>
+      <th>10</th>
+      <td>P11</td>
+      <td>2.0</td>
+      <td>28.0</td>
+      <td>25.0</td>
+      <td>0.295473</td>
+      <td>0.601933</td>
+      <td>0.543084</td>
+      <td>27205.754582</td>
+      <td>0.443552</td>
+    </tr>
+    <tr>
+      <th>11</th>
+      <td>P12</td>
+      <td>4.0</td>
+      <td>35.0</td>
+      <td>32.0</td>
+      <td>0.356759</td>
+      <td>0.443593</td>
+      <td>0.262696</td>
+      <td>25662.971166</td>
+      <td>0.323067</td>
+    </tr>
+  </tbody>
+</table></div></div></div>
+</div>
+<div class="cell tag_hide-input docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ja</span><span class="o">.</span><span class="n">display_table</span><span class="p">(</span><span class="n">pipe_network</span><span class="o">.</span><span class="n">get_flow_path_table</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div class="my_table"><table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>path</th>
+      <th>Δp-elev. [kPa]</th>
+      <th>Δp-dyn. [kPa]</th>
+      <th>Δp-tot. [kPa]</th>
+      <th>Δp-deficit [kPa]</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>P1|P2|P3|P4|P8|P9|P10|P11|P12</td>
+      <td>0.0</td>
+      <td>39.003055</td>
+      <td>39.003055</td>
+      <td>0.000000</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>P1|P5|P12</td>
+      <td>0.0</td>
+      <td>39.000698</td>
+      <td>39.000698</td>
+      <td>0.002357</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>P1|P2|P6|P11|P12</td>
+      <td>0.0</td>
+      <td>39.001692</td>
+      <td>39.001692</td>
+      <td>0.001363</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>P1|P2|P3|P7|P10|P11|P12</td>
+      <td>0.0</td>
+      <td>39.002474</td>
+      <td>39.002474</td>
+      <td>0.000581</td>
+    </tr>
+  </tbody>
+</table></div></div></div>
+</div>
+<section id="comparing-volume-flow-rates">
+<h3>Comparing volume flow rates<a class="headerlink" href="#comparing-volume-flow-rates" title="Permalink to this headline">#</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;pipe_IDs&#39;</span><span class="p">:</span> <span class="n">pipe_table1</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span>
+    <span class="s1">&#39;V_1&#39;</span><span class="p">:</span> <span class="n">pipe_table1</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span> <span class="mi">4</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span>
+    <span class="s1">&#39;V_2&#39;</span><span class="p">:</span> <span class="n">pipe_table2</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span> <span class="mi">4</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="p">}</span>
+<span class="n">comp_table</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+<span class="n">comp_table</span><span class="p">[</span><span class="s1">&#39;abs. difference&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">comp_table</span><span class="p">[</span><span class="s1">&#39;V_2&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">comp_table</span><span class="p">[</span><span class="s1">&#39;V_1&#39;</span><span class="p">]</span>
+<span class="n">comp_table</span><span class="p">[</span><span class="s1">&#39;</span><span class="si">% d</span><span class="s1">ifference&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">comp_table</span><span class="p">[</span><span class="s1">&#39;abs. difference&#39;</span><span class="p">]</span> <span class="o">/</span> <span class="n">comp_table</span><span class="p">[</span><span class="s1">&#39;V_1&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">100</span>
+<span class="n">ja</span><span class="o">.</span><span class="n">display_table</span><span class="p">(</span><span class="n">comp_table</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div class="my_table"><table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>pipe_IDs</th>
+      <th>V_1</th>
+      <th>V_2</th>
+      <th>abs. difference</th>
+      <th>% difference</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>P1</td>
+      <td>0.458009</td>
+      <td>0.356759</td>
+      <td>-0.101251</td>
+      <td>-22.106701</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>P2</td>
+      <td>0.397008</td>
+      <td>0.295473</td>
+      <td>-0.101534</td>
+      <td>-25.574913</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>P3</td>
+      <td>0.214003</td>
+      <td>0.175576</td>
+      <td>-0.038427</td>
+      <td>-17.956196</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>P4</td>
+      <td>0.122002</td>
+      <td>0.124235</td>
+      <td>0.002233</td>
+      <td>1.830497</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>P5</td>
+      <td>0.061002</td>
+      <td>0.061285</td>
+      <td>0.000284</td>
+      <td>0.464941</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>P6</td>
+      <td>0.183004</td>
+      <td>0.119897</td>
+      <td>-0.063108</td>
+      <td>-34.484162</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>P7</td>
+      <td>0.092001</td>
+      <td>0.051341</td>
+      <td>-0.040660</td>
+      <td>-44.195050</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>P8</td>
+      <td>0.122002</td>
+      <td>0.124235</td>
+      <td>0.002233</td>
+      <td>1.830497</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>P9</td>
+      <td>0.122002</td>
+      <td>0.124235</td>
+      <td>0.002233</td>
+      <td>1.830497</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>P10</td>
+      <td>0.214003</td>
+      <td>0.175576</td>
+      <td>-0.038427</td>
+      <td>-17.956196</td>
+    </tr>
+    <tr>
+      <th>10</th>
+      <td>P11</td>
+      <td>0.397008</td>
+      <td>0.295473</td>
+      <td>-0.101534</td>
+      <td>-25.574913</td>
+    </tr>
+    <tr>
+      <th>11</th>
+      <td>P12</td>
+      <td>0.458009</td>
+      <td>0.356759</td>
+      <td>-0.101251</td>
+      <td>-22.106701</td>
+    </tr>
+  </tbody>
+</table></div></div></div>
+</div>
+<p>For the same pressure rise of 39 kPa between the start and the end node of the network, the total flow rate into (and out of) the network has been reduced. In the cross-overs P6 and P7 the volume flow rate has been reduced approximately by 35 % and 44 % respectively. However, in the cross-overs P5 and P8 the volume flow rates have slightly increased, because there is less pressure drop in the supply and return header.</p>
+</section>
+<section id="id1">
+<h3>Hydraulic Resistance of Pipe Network<a class="headerlink" href="#id1" title="Permalink to this headline">#</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ja</span><span class="o">.</span><span class="n">display_list</span><span class="p">([</span>
+    <span class="sa">f</span><span class="s2">&quot;network hydraulic resistance: &lt;b&gt;</span><span class="si">{</span><span class="n">pipe_network</span><span class="o">.</span><span class="n">hydraulic_resistance</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;Pa / (m ** 3 / s) ** 2&#39;</span><span class="p">)</span><span class="si">:</span><span class="s2">~P.5g</span><span class="si">}</span><span class="s2">&lt;/b&gt;&quot;</span>
+<span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><ul><li>network hydraulic resistance: <b>3.0644×10¹¹ Pa·s²/m⁶</b></li></ul></div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">system_curve2</span> <span class="o">=</span> <span class="n">SystemCurve</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">pipe_network</span><span class="o">.</span><span class="n">hydraulic_resistance</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;system curve 2&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="plot-the-system-curves">
+<h2>Plot the System Curves<a class="headerlink" href="#plot-the-system-curves" title="Permalink to this headline">#</a></h2>
+<div class="cell tag_hide-input docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">chart</span> <span class="o">=</span> <span class="n">plot_curves</span><span class="p">(</span>
+    <span class="n">pump_curves</span><span class="o">=</span><span class="p">[],</span>
+    <span class="n">system_curves</span><span class="o">=</span><span class="p">[</span><span class="n">system_curve1</span><span class="p">,</span> <span class="n">system_curve2</span><span class="p">],</span>
+    <span class="n">working_point</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">fig_size</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span>
+    <span class="n">V_step</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mf">0.05</span><span class="p">,</span> <span class="s1">&#39;L / s&#39;</span><span class="p">),</span>
+    <span class="n">V_max</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mf">0.55</span><span class="p">,</span> <span class="s1">&#39;L / s&#39;</span><span class="p">),</span>
+    <span class="n">dP_step</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="s1">&#39;kPa&#39;</span><span class="p">),</span>
+    <span class="n">dP_max</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mi">50</span><span class="p">,</span> <span class="s1">&#39;kPa&#39;</span><span class="p">),</span>
+    <span class="n">V_unit</span><span class="o">=</span><span class="s1">&#39;L / s&#39;</span><span class="p">,</span>
+    <span class="n">dP_unit</span><span class="o">=</span><span class="s1">&#39;kPa&#39;</span>
+<span class="p">)</span>
+
+<span class="n">chart</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/closed_pipe_network_analysis_49_0.png" src="_images/closed_pipe_network_analysis_49_0.png" />
+</div>
+</div>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            kernelName: "python3",
+            path: "./."
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+              </div>
+              
+            </main>
+            <footer class="footer-article noprint">
+                
+    <!-- Previous / next buttons -->
+<div class='prev-next-area'>
+    <a class='left-prev' id="prev-link" href="closed_pipe_network_design.html" title="previous page">
+        <i class="fas fa-angle-left"></i>
+        <div class="prev-next-info">
+            <p class="prev-next-subtitle">previous</p>
+            <p class="prev-next-title">Design of a Hydronic Pipe Network</p>
+        </div>
+    </a>
+</div>
+            </footer>
+        </div>
+    </div>
+    <div class="footer-content row">
+        <footer class="col footer"><p>
+  
+    By Tom Christiaens<br/>
+  
+      &copy; Copyright 2022.<br/>
+</p>
+        </footer>
+    </div>
+    
+</div>
+
+
+      </div>
+    </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+
+
+  </body>
+</html>

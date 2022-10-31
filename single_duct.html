@@ -1,0 +1,985 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Air Flow through a Duct &#8212; Pipe and Duct Flow Calculations with Python</title>
+    
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+<link href="_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+
+    
+  <link rel="stylesheet"
+    href="_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" href="_static/styles/sphinx-book-theme.css?digest=5115cc725059bd94278eecd172e13a965bf8f5a9" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="_static/design-style.b7bb847fb20b106c3d81b95245e65545.min.css" />
+    
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/clipboard.min.js"></script>
+    <script src="_static/copybutton.js"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?digest=9c920249402e914e316237a7dbc6769907cce411"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
+    <script src="_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="_static/sphinx-thebe.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Design of a Hydronic Pipe Network" href="closed_pipe_network_design.html" />
+    <link rel="prev" title="Pipe and Duct Flow Calculations with Python" href="intro.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="None">
+    
+
+    <!-- Google Analytics -->
+    
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
+<!-- Checkboxes to toggle the left sidebar -->
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle navigation sidebar">
+<label class="overlay overlay-navbar" for="__navigation">
+    <div class="visually-hidden">Toggle navigation sidebar</div>
+</label>
+<!-- Checkboxes to toggle the in-page toc -->
+<input type="checkbox" class="sidebar-toggle" name="__page-toc" id="__page-toc" aria-label="Toggle in-page Table of Contents">
+<label class="overlay overlay-pagetoc" for="__page-toc">
+    <div class="visually-hidden">Toggle in-page Table of Contents</div>
+</label>
+<!-- Headers at the top -->
+<div class="announcement header-item noprint"></div>
+<div class="header header-item noprint"></div>
+
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<!-- Sidebar -->
+<div class="bd-sidebar noprint" id="site-navigation">
+    <div class="bd-sidebar__content">
+        <div class="bd-sidebar__top"><div class="navbar-brand-box">
+    <a class="navbar-brand text-wrap" href="index.html">
+      
+        <!-- `logo` is deprecated in Sphinx 4.0, so remove this when we stop supporting 3 -->
+        
+      
+      
+      <img src="_static/logo.png" class="logo" alt="logo">
+      
+      
+      <h1 class="site-logo" id="site-title">Pipe and Duct Flow Calculations with Python</h1>
+      
+    </a>
+</div><form class="bd-search d-flex align-items-center" action="search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search this book..." aria-label="Search this book..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="intro.html">
+                    Pipe and Duct Flow Calculations with Python
+                </a>
+            </li>
+        </ul>
+        <ul class="current nav bd-sidenav">
+ <li class="toctree-l1 current active">
+  <a class="current reference internal" href="#">
+   Air Flow through a Duct
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="closed_pipe_network_design.html">
+   Design of a Hydronic Pipe Network
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="closed_pipe_network_analysis.html">
+   Analysis of the Hydronic Network
+  </a>
+ </li>
+</ul>
+
+    </div>
+</nav></div>
+        <div class="bd-sidebar__bottom">
+             <!-- To handle the deprecated key -->
+            
+            <div class="navbar_extra_footer">
+            Powered by <a href="https://jupyterbook.org">Jupyter Book</a>
+            </div>
+            
+        </div>
+    </div>
+    <div id="rtd-footer-container"></div>
+</div>
+
+
+          
+
+
+          
+<!-- A tiny helper pixel to detect if we've scrolled -->
+<div class="sbt-scroll-pixel-helper"></div>
+<!-- Main content -->
+<div class="col py-0 content-container">
+    
+    <div class="header-article row sticky-top noprint">
+        
+
+
+
+<div class="col py-1 d-flex header-article-main">
+    <div class="header-article__left">
+        
+        <label for="__navigation"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="right"
+title="Toggle navigation"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-bars"></i>
+  </span>
+
+</label>
+
+        
+    </div>
+    <div class="header-article__right">
+<div class="menu-dropdown menu-dropdown-launch-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Launch interactive content">
+      <i class="fas fa-rocket"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="https://mybinder.org/v2/gh/TomLXXVI/jbFluidFlow/master?urlpath=tree/single_duct.ipynb"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Launch on Binder"
+>
+  
+
+<span class="headerbtn__icon-container">
+  
+    <img src="_static/images/logo_binder.svg">
+  </span>
+<span class="headerbtn__text-container">Binder</span>
+</a>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+
+<button onclick="toggleFullScreen()"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="bottom"
+title="Fullscreen mode"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+<div class="menu-dropdown menu-dropdown-repository-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Source repositories">
+      <i class="fab fa-github"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="https://github.com/TomLXXVI/jbFluidFlow"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Source repository"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="headerbtn__text-container">repository</span>
+</a>
+
+      </li>
+      
+      <li>
+        <a href="https://github.com/TomLXXVI/jbFluidFlow/issues/new?title=Issue%20on%20page%20%2Fsingle_duct.html&body=Your%20issue%20content%20here."
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Open an issue"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="headerbtn__text-container">open issue</span>
+</a>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+
+<div class="menu-dropdown menu-dropdown-download-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Download this page">
+      <i class="fas fa-download"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="_sources/single_duct.ipynb"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Download source file"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="headerbtn__text-container">.ipynb</span>
+</a>
+
+      </li>
+      
+      <li>
+        
+<button onclick="printPdf(this)"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="left"
+title="Print to PDF"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="headerbtn__text-container">.pdf</span>
+</button>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+<label for="__page-toc"
+  class="headerbtn headerbtn-page-toc"
+  
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-list"></i>
+  </span>
+
+</label>
+
+    </div>
+</div>
+
+<!-- Table of contents -->
+<div class="col-md-3 bd-toc show noprint">
+    <div class="tocsection onthispage pt-5 pb-3">
+        <i class="fas fa-list"></i> Contents
+    </div>
+    <nav id="bd-toc-nav" aria-label="Page">
+        <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#let-s-import-what-we-ll-need">
+   Let’s Import What We’ll Need
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#define-standard-dry-air">
+   Define Standard Dry Air
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#sizing-a-rectangular-duct">
+   Sizing a Rectangular Duct
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#sizing-a-rectangular-duct-with-a-schedule">
+     Sizing a Rectangular Duct with a Schedule
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#air-volume-flow-rate-through-a-rectangular-duct">
+   Air Volume Flow Rate through a Rectangular Duct
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#sizing-a-circular-duct">
+   Sizing a Circular Duct
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#sizing-a-circular-duct-with-a-schedule">
+     Sizing a Circular Duct with a Schedule
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#replace-a-circular-duct-by-an-equivalent-rectangular-duct">
+     Replace a Circular Duct by an Equivalent Rectangular Duct
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#sizing-a-flat-oval-duct">
+   Sizing a Flat-Oval Duct
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#adding-a-fitting-to-a-rectangular-duct">
+   Adding a Fitting to a Rectangular Duct
+  </a>
+ </li>
+</ul>
+
+    </nav>
+</div>
+    </div>
+    <div class="article row">
+        <div class="col pl-md-3 pl-lg-5 content-container">
+            <!-- Table of contents that is only displayed when printing the page -->
+            <div id="jb-print-docs-body" class="onlyprint">
+                <h1>Air Flow through a Duct</h1>
+                <!-- Table of contents -->
+                <div id="print-main-content">
+                    <div id="jb-print-toc">
+                        
+                        <div>
+                            <h2> Contents </h2>
+                        </div>
+                        <nav aria-label="Page">
+                            <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#let-s-import-what-we-ll-need">
+   Let’s Import What We’ll Need
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#define-standard-dry-air">
+   Define Standard Dry Air
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#sizing-a-rectangular-duct">
+   Sizing a Rectangular Duct
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#sizing-a-rectangular-duct-with-a-schedule">
+     Sizing a Rectangular Duct with a Schedule
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#air-volume-flow-rate-through-a-rectangular-duct">
+   Air Volume Flow Rate through a Rectangular Duct
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#sizing-a-circular-duct">
+   Sizing a Circular Duct
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#sizing-a-circular-duct-with-a-schedule">
+     Sizing a Circular Duct with a Schedule
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#replace-a-circular-duct-by-an-equivalent-rectangular-duct">
+     Replace a Circular Duct by an Equivalent Rectangular Duct
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#sizing-a-flat-oval-duct">
+   Sizing a Flat-Oval Duct
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#adding-a-fitting-to-a-rectangular-duct">
+   Adding a Fitting to a Rectangular Duct
+  </a>
+ </li>
+</ul>
+
+                        </nav>
+                    </div>
+                </div>
+            </div>
+            <main id="main-content" role="main">
+                
+              <div>
+                
+  <section class="tex2jax_ignore mathjax_ignore" id="air-flow-through-a-duct">
+<h1>Air Flow through a Duct<a class="headerlink" href="#air-flow-through-a-duct" title="Permalink to this headline">#</a></h1>
+<hr class="docutils" />
+<p>In this notebook it is shown how to size a single air duct using the package <code class="docutils literal notranslate"><span class="pre">fluid_flow</span></code> which is part of the main package <code class="docutils literal notranslate"><span class="pre">hvac</span></code>.</p>
+<section id="let-s-import-what-we-ll-need">
+<h2>Let’s Import What We’ll Need<a class="headerlink" href="#let-s-import-what-we-ll-need" title="Permalink to this headline">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">hvac</span> <span class="kn">import</span> <span class="n">Quantity</span>
+<span class="kn">from</span> <span class="nn">hvac.fluid_flow</span> <span class="kn">import</span> <span class="n">Duct</span><span class="p">,</span> <span class="n">Rectangular</span>
+<span class="kn">from</span> <span class="nn">hvac.fluids</span> <span class="kn">import</span> <span class="n">Fluid</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>We define a shortcut for instantiating <code class="docutils literal notranslate"><span class="pre">Quantity</span></code> objects:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">Q_</span> <span class="o">=</span> <span class="n">Quantity</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="define-standard-dry-air">
+<h2>Define Standard Dry Air<a class="headerlink" href="#define-standard-dry-air" title="Permalink to this headline">#</a></h2>
+<p>We use standard dry air for sizing the duct. The code below shows how standard air is defined.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">Air</span> <span class="o">=</span> <span class="n">Fluid</span><span class="p">(</span><span class="s1">&#39;Air&#39;</span><span class="p">)</span>
+<span class="n">STANDARD_AIR</span> <span class="o">=</span> <span class="n">Air</span><span class="p">(</span><span class="n">T</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="s1">&#39;degC&#39;</span><span class="p">),</span> <span class="n">P</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mi">101_325</span><span class="p">,</span> <span class="s1">&#39;Pa&#39;</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="sizing-a-rectangular-duct">
+<h2>Sizing a Rectangular Duct<a class="headerlink" href="#sizing-a-rectangular-duct" title="Permalink to this headline">#</a></h2>
+<p>A duct has a cross-section. Three types of cross-section are available:</p>
+<ul class="simple">
+<li><p>circular</p></li>
+<li><p>rectangular</p></li>
+<li><p>flat-oval</p></li>
+</ul>
+<p>Here we will size a rectangular duct. The height of the rectangular cross-section must be known beforehand. The width will then be calculated. To create a rectangular cross-section with a height of 100 mm, we write:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">cross_section</span> <span class="o">=</span> <span class="n">Rectangular</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">height</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="s1">&#39;mm&#39;</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>The required width of the duct will depend on the design volume flow rate through the duct and the selected specific pressure drop (i.e. per unit of duct length). To size a duct we need to specify:</p>
+<ul class="simple">
+<li><p>the length of the duct</p></li>
+<li><p>wall roughness (for a galvanized steel duct with medium roughness this is 0.09 mm)</p></li>
+<li><p>the fluid that flows through the duct (in this case standard air as defined above)</p></li>
+<li><p>the cross-section (of which the required width needs to be determined)</p></li>
+<li><p>the volume flow rate of the fluid through the duct</p></li>
+<li><p>either the specific pressure drop or the total pressure drop across the straight length of duct; in this example a specific pressure drop will be specified.</p></li>
+</ul>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">duct</span> <span class="o">=</span> <span class="n">Duct</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
+    <span class="n">length</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mf">18.2</span><span class="p">,</span> <span class="s1">&#39;m&#39;</span><span class="p">),</span>
+    <span class="n">wall_roughness</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mf">0.09</span><span class="p">,</span> <span class="s1">&#39;mm&#39;</span><span class="p">),</span>
+    <span class="n">fluid</span><span class="o">=</span><span class="n">STANDARD_AIR</span><span class="p">,</span>
+    <span class="n">cross_section</span><span class="o">=</span><span class="n">cross_section</span><span class="p">,</span>
+    <span class="n">volume_flow_rate</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mi">500</span><span class="p">,</span> <span class="s1">&#39;m ** 3 / hr&#39;</span><span class="p">),</span>
+    <span class="n">specific_pressure_drop</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mf">1.28</span><span class="p">,</span> <span class="s1">&#39;Pa / m&#39;</span><span class="p">)</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Once the duct is created with the parameters above, we can retrieve the required width of the duct’s cross-section through the <code class="docutils literal notranslate"><span class="pre">cross_section</span></code> property of the <code class="docutils literal notranslate"><span class="pre">Duct</span></code> object:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ja</span><span class="o">.</span><span class="n">display_list</span><span class="p">([</span>
+    <span class="sa">f</span><span class="s2">&quot;cross-section width of duct: &lt;b&gt;</span><span class="si">{</span><span class="n">duct</span><span class="o">.</span><span class="n">cross_section</span><span class="o">.</span><span class="n">width</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;mm&#39;</span><span class="p">)</span><span class="si">:</span><span class="s2">~P.3f</span><span class="si">}</span><span class="s2">&lt;/b&gt;&quot;</span>
+<span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><ul><li>cross-section width of duct: <b>370.567 mm</b></li></ul></div></div>
+</div>
+<p>The equivalent diameter, hydraulic diameter, and the cross-section area of the duct can also be requested:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ja</span><span class="o">.</span><span class="n">display_list</span><span class="p">([</span>
+    <span class="sa">f</span><span class="s2">&quot;equivalent diameter: &lt;b&gt;</span><span class="si">{</span><span class="n">duct</span><span class="o">.</span><span class="n">cross_section</span><span class="o">.</span><span class="n">equivalent_diameter</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;mm&#39;</span><span class="p">)</span><span class="si">:</span><span class="s2">~P.3f</span><span class="si">}</span><span class="s2">&lt;/b&gt;&quot;</span><span class="p">,</span>
+    <span class="sa">f</span><span class="s2">&quot;hydraulic diameter: &lt;b&gt;</span><span class="si">{</span><span class="n">duct</span><span class="o">.</span><span class="n">cross_section</span><span class="o">.</span><span class="n">hydraulic_diameter</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;mm&#39;</span><span class="p">)</span><span class="si">:</span><span class="s2">~P.3f</span><span class="si">}</span><span class="s2">&lt;/b&gt;&quot;</span><span class="p">,</span>
+    <span class="sa">f</span><span class="s2">&quot;cross-section area: &lt;b&gt;</span><span class="si">{</span><span class="n">duct</span><span class="o">.</span><span class="n">cross_section</span><span class="o">.</span><span class="n">area</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;cm ** 2&#39;</span><span class="p">)</span><span class="si">:</span><span class="s2">~P.3f</span><span class="si">}</span><span class="s2">&lt;/b&gt;&quot;</span>
+<span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><ul><li>equivalent diameter: <b>200.138 mm</b></li><li>hydraulic diameter: <b>157.498 mm</b></li><li>cross-section area: <b>370.567 cm²</b></li></ul></div></div>
+</div>
+<p>The total (friction) pressure drop over the whole length of duct can be attained by:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ja</span><span class="o">.</span><span class="n">display_list</span><span class="p">([</span>
+    <span class="sa">f</span><span class="s2">&quot;pressure drop: &lt;b&gt;</span><span class="si">{</span><span class="n">duct</span><span class="o">.</span><span class="n">pressure_drop</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;Pa&#39;</span><span class="p">)</span><span class="si">:</span><span class="s2">~P.3f</span><span class="si">}</span><span class="s2">&lt;/b&gt;&quot;</span>
+<span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><ul><li>pressure drop: <b>23.296 Pa</b></li></ul></div></div>
+</div>
+<section id="sizing-a-rectangular-duct-with-a-schedule">
+<h3>Sizing a Rectangular Duct with a Schedule<a class="headerlink" href="#sizing-a-rectangular-duct-with-a-schedule" title="Permalink to this headline">#</a></h3>
+<p>In order to get a cross-section of the duct which is commercially available, we will couple a “schedule” (an instance of the <code class="docutils literal notranslate"><span class="pre">DuctSchedule</span></code> class) with the cross-section. For rectangular ducts a default schedule is available:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">hvac.fluid_flow</span> <span class="kn">import</span> <span class="n">rectangular_duct_schedule</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>To indicate that we want the nearest commercially available width, we add the parameter <code class="docutils literal notranslate"><span class="pre">schedule</span></code> when creating the cross-section:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">cross_section</span> <span class="o">=</span> <span class="n">Rectangular</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">height</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="s1">&#39;mm&#39;</span><span class="p">),</span> <span class="n">schedule</span><span class="o">=</span><span class="n">rectangular_duct_schedule</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Now we create the duct like before:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">duct</span> <span class="o">=</span> <span class="n">Duct</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
+    <span class="n">length</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mf">18.2</span><span class="p">,</span> <span class="s1">&#39;m&#39;</span><span class="p">),</span>
+    <span class="n">wall_roughness</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mf">0.09</span><span class="p">,</span> <span class="s1">&#39;mm&#39;</span><span class="p">),</span>
+    <span class="n">fluid</span><span class="o">=</span><span class="n">STANDARD_AIR</span><span class="p">,</span>
+    <span class="n">cross_section</span><span class="o">=</span><span class="n">cross_section</span><span class="p">,</span>
+    <span class="n">volume_flow_rate</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mi">500</span><span class="p">,</span> <span class="s1">&#39;m ** 3 / hr&#39;</span><span class="p">),</span>
+    <span class="n">specific_pressure_drop</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mf">1.28</span><span class="p">,</span> <span class="s1">&#39;Pa / m&#39;</span><span class="p">)</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ja</span><span class="o">.</span><span class="n">display_list</span><span class="p">([</span>
+    <span class="sa">f</span><span class="s2">&quot;cross-section width of duct: &lt;b&gt;</span><span class="si">{</span><span class="n">duct</span><span class="o">.</span><span class="n">cross_section</span><span class="o">.</span><span class="n">width</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;mm&#39;</span><span class="p">)</span><span class="si">:</span><span class="s2">~P.1f</span><span class="si">}</span><span class="s2">&lt;/b&gt;&quot;</span>
+<span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><ul><li>cross-section width of duct: <b>350.0 mm</b></li></ul></div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ja</span><span class="o">.</span><span class="n">display_list</span><span class="p">([</span>
+    <span class="sa">f</span><span class="s2">&quot;equivalent diameter: &lt;b&gt;</span><span class="si">{</span><span class="n">duct</span><span class="o">.</span><span class="n">cross_section</span><span class="o">.</span><span class="n">equivalent_diameter</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;mm&#39;</span><span class="p">)</span><span class="si">:</span><span class="s2">~P.3f</span><span class="si">}</span><span class="s2">&lt;/b&gt;&quot;</span><span class="p">,</span>
+    <span class="sa">f</span><span class="s2">&quot;hydraulic diameter: &lt;b&gt;</span><span class="si">{</span><span class="n">duct</span><span class="o">.</span><span class="n">cross_section</span><span class="o">.</span><span class="n">hydraulic_diameter</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;mm&#39;</span><span class="p">)</span><span class="si">:</span><span class="s2">~P.3f</span><span class="si">}</span><span class="s2">&lt;/b&gt;&quot;</span><span class="p">,</span>
+    <span class="sa">f</span><span class="s2">&quot;cross-section area: &lt;b&gt;</span><span class="si">{</span><span class="n">duct</span><span class="o">.</span><span class="n">cross_section</span><span class="o">.</span><span class="n">area</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;cm ** 2&#39;</span><span class="p">)</span><span class="si">:</span><span class="s2">~P.3f</span><span class="si">}</span><span class="s2">&lt;/b&gt;&quot;</span>
+<span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><ul><li>equivalent diameter: <b>195.291 mm</b></li><li>hydraulic diameter: <b>155.556 mm</b></li><li>cross-section area: <b>350.000 cm²</b></li></ul></div></div>
+</div>
+<p>As the commercially available width is different from the calculated value, the specific pressure drop that we’ve initially specified won’t be valid anymore:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ja</span><span class="o">.</span><span class="n">display_list</span><span class="p">([</span>
+    <span class="sa">f</span><span class="s2">&quot;specific pressure drop across duct: &lt;b&gt;</span><span class="si">{</span><span class="n">duct</span><span class="o">.</span><span class="n">specific_pressure_drop</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;Pa / m&#39;</span><span class="p">)</span><span class="si">:</span><span class="s2">~P.3f</span><span class="si">}</span><span class="s2">&lt;/b&gt;&quot;</span><span class="p">,</span>
+    <span class="sa">f</span><span class="s2">&quot;pressure drop across duct: &lt;b&gt;</span><span class="si">{</span><span class="n">duct</span><span class="o">.</span><span class="n">pressure_drop</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;Pa&#39;</span><span class="p">)</span><span class="si">:</span><span class="s2">~P.3f</span><span class="si">}</span><span class="s2">&lt;/b&gt;&quot;</span>
+<span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><ul><li>specific pressure drop across duct: <b>1.439 Pa/m</b></li><li>pressure drop across duct: <b>26.190 Pa</b></li></ul></div></div>
+</div>
+<p>Other flow quantities that can be retrieved after the duct has been created, are:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ja</span><span class="o">.</span><span class="n">display_list</span><span class="p">([</span>
+    <span class="sa">f</span><span class="s2">&quot;the air velocity in the duct: &lt;b&gt;</span><span class="si">{</span><span class="n">duct</span><span class="o">.</span><span class="n">velocity</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;m / s&#39;</span><span class="p">)</span><span class="si">:</span><span class="s2">~P.3f</span><span class="si">}</span><span class="s2">&lt;/b&gt;&quot;</span><span class="p">,</span>
+    <span class="sa">f</span><span class="s2">&quot;the reynolds number: &lt;b&gt;</span><span class="si">{</span><span class="n">duct</span><span class="o">.</span><span class="n">reynolds_number</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&lt;/b&gt;&quot;</span><span class="p">,</span>
+    <span class="sa">f</span><span class="s2">&quot;the velocity pressure: &lt;b&gt;</span><span class="si">{</span><span class="n">duct</span><span class="o">.</span><span class="n">velocity_pressure</span><span class="si">:</span><span class="s2">~P.3f</span><span class="si">}</span><span class="s2">&lt;/b&gt;&quot;</span>
+<span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><ul><li>the air velocity in the duct: <b>3.968 m/s</b></li><li>the reynolds number: <b>40842.480</b></li><li>the velocity pressure: <b>9.484 Pa</b></li></ul></div></div>
+</div>
+</section>
+</section>
+<section id="air-volume-flow-rate-through-a-rectangular-duct">
+<h2>Air Volume Flow Rate through a Rectangular Duct<a class="headerlink" href="#air-volume-flow-rate-through-a-rectangular-duct" title="Permalink to this headline">#</a></h2>
+<p>Let’s keep the duct from the example above. Suppose that a pressure drop of 50 Pa exists along the duct. The question is now what air volume flow rate is causing this pressure drop.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">duct</span><span class="o">.</span><span class="n">pressure_drop</span> <span class="o">=</span> <span class="n">Q_</span><span class="p">(</span><span class="mi">50</span><span class="p">,</span> <span class="s1">&#39;Pa&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ja</span><span class="o">.</span><span class="n">display_list</span><span class="p">([</span>
+    <span class="sa">f</span><span class="s2">&quot;volume flow rate through duct = &lt;b&gt;</span><span class="si">{</span><span class="n">duct</span><span class="o">.</span><span class="n">volume_flow_rate</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;m ** 3 / hr&#39;</span><span class="p">)</span><span class="si">:</span><span class="s2">~P.1f</span><span class="si">}</span><span class="s2">&lt;/b&gt;&quot;</span>
+<span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><ul><li>volume flow rate through duct = <b>711.3 m³/h</b></li></ul></div></div>
+</div>
+</section>
+<section id="sizing-a-circular-duct">
+<h2>Sizing a Circular Duct<a class="headerlink" href="#sizing-a-circular-duct" title="Permalink to this headline">#</a></h2>
+<p>When sizing a circular duct for a given design volume flow rate and pressure drop, the only thing we know is that the duct has a circular cross-section. A circular cross-section is represented by the <code class="docutils literal notranslate"><span class="pre">Circular</span></code> class.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">hvac.fluid_flow</span> <span class="kn">import</span> <span class="n">Circular</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Simply call <code class="docutils literal notranslate"><span class="pre">create</span></code> on the <code class="docutils literal notranslate"><span class="pre">Circular</span></code> class to create the cross-section:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">cross_section</span> <span class="o">=</span> <span class="n">Circular</span><span class="o">.</span><span class="n">create</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Using the same design values as for the rectangular duct above, we create the circular duct in exactly the same way:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">duct</span> <span class="o">=</span> <span class="n">Duct</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
+    <span class="n">length</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mf">18.2</span><span class="p">,</span> <span class="s1">&#39;m&#39;</span><span class="p">),</span>
+    <span class="n">wall_roughness</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mf">0.09</span><span class="p">,</span> <span class="s1">&#39;mm&#39;</span><span class="p">),</span>
+    <span class="n">fluid</span><span class="o">=</span><span class="n">STANDARD_AIR</span><span class="p">,</span>
+    <span class="n">cross_section</span><span class="o">=</span><span class="n">cross_section</span><span class="p">,</span>
+    <span class="n">volume_flow_rate</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mi">500</span><span class="p">,</span> <span class="s1">&#39;m ** 3 / hr&#39;</span><span class="p">),</span>
+    <span class="n">specific_pressure_drop</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mf">1.28</span><span class="p">,</span> <span class="s1">&#39;Pa / m&#39;</span><span class="p">)</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>To get at the required internal diameter to establish the requested specific pressure drop at the design volume flow rate, we write:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ja</span><span class="o">.</span><span class="n">display_list</span><span class="p">([</span>
+    <span class="sa">f</span><span class="s2">&quot;cross-section internal diameter: &lt;b&gt;</span><span class="si">{</span><span class="n">duct</span><span class="o">.</span><span class="n">cross_section</span><span class="o">.</span><span class="n">internal_diameter</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;mm&#39;</span><span class="p">)</span><span class="si">:</span><span class="s2">~P.3f</span><span class="si">}</span><span class="s2">&lt;/b&gt;&quot;</span>
+<span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><ul><li>cross-section internal diameter: <b>200.138 mm</b></li></ul></div></div>
+</div>
+<p>A circular cross-section also has the equivalent and hydraulic diameter being defined; obviously they are equal to the internal diameter.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ja</span><span class="o">.</span><span class="n">display_list</span><span class="p">([</span>
+    <span class="sa">f</span><span class="s2">&quot;equivalent diameter: &lt;b&gt;</span><span class="si">{</span><span class="n">duct</span><span class="o">.</span><span class="n">cross_section</span><span class="o">.</span><span class="n">equivalent_diameter</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;mm&#39;</span><span class="p">)</span><span class="si">:</span><span class="s2">~P.3f</span><span class="si">}</span><span class="s2">&lt;/b&gt;&quot;</span><span class="p">,</span>
+    <span class="sa">f</span><span class="s2">&quot;hydraulic diameter: &lt;b&gt;</span><span class="si">{</span><span class="n">duct</span><span class="o">.</span><span class="n">cross_section</span><span class="o">.</span><span class="n">hydraulic_diameter</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;mm&#39;</span><span class="p">)</span><span class="si">:</span><span class="s2">~P.3f</span><span class="si">}</span><span class="s2">&lt;/b&gt;&quot;</span><span class="p">,</span>
+    <span class="sa">f</span><span class="s2">&quot;cross-section area: &lt;b&gt;</span><span class="si">{</span><span class="n">duct</span><span class="o">.</span><span class="n">cross_section</span><span class="o">.</span><span class="n">area</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;cm ** 2&#39;</span><span class="p">)</span><span class="si">:</span><span class="s2">~P.3f</span><span class="si">}</span><span class="s2">&lt;/b&gt;&quot;</span>
+<span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><ul><li>equivalent diameter: <b>200.138 mm</b></li><li>hydraulic diameter: <b>200.138 mm</b></li><li>cross-section area: <b>314.593 cm²</b></li></ul></div></div>
+</div>
+<p>As the length of the circular duct is the same as that of the rectangular duct, and as we have used the same specific pressure drop, the total pressure drop along the circular duct should be equal to the total pressure drop along the rectangular duct:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ja</span><span class="o">.</span><span class="n">display_list</span><span class="p">([</span>
+    <span class="sa">f</span><span class="s2">&quot;pressure drop: &lt;b&gt;</span><span class="si">{</span><span class="n">duct</span><span class="o">.</span><span class="n">pressure_drop</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;Pa&#39;</span><span class="p">)</span><span class="si">:</span><span class="s2">~P.3f</span><span class="si">}</span><span class="s2">&lt;/b&gt;&quot;</span>
+<span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><ul><li>pressure drop: <b>23.296 Pa</b></li></ul></div></div>
+</div>
+<blockquote>
+<div><p>Notice that the equivalent diameter of the rectangular duct in the previous example matches with the internal diameter of the circular duct.</p>
+</div></blockquote>
+<section id="sizing-a-circular-duct-with-a-schedule">
+<h3>Sizing a Circular Duct with a Schedule<a class="headerlink" href="#sizing-a-circular-duct-with-a-schedule" title="Permalink to this headline">#</a></h3>
+<p>In the same way as for the rectangular duct, we can assign a “schedule” to the cross-section of a circular duct in order to retrieve an internal diameter of the duct that is commercially available.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">hvac.fluid_flow</span> <span class="kn">import</span> <span class="n">circular_duct_schedule</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">cross_section</span> <span class="o">=</span> <span class="n">Circular</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">schedule</span><span class="o">=</span><span class="n">circular_duct_schedule</span><span class="p">)</span>
+
+<span class="n">duct</span> <span class="o">=</span> <span class="n">Duct</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
+    <span class="n">length</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mf">18.2</span><span class="p">,</span> <span class="s1">&#39;m&#39;</span><span class="p">),</span>
+    <span class="n">wall_roughness</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mf">0.09</span><span class="p">,</span> <span class="s1">&#39;mm&#39;</span><span class="p">),</span>
+    <span class="n">fluid</span><span class="o">=</span><span class="n">STANDARD_AIR</span><span class="p">,</span>
+    <span class="n">cross_section</span><span class="o">=</span><span class="n">cross_section</span><span class="p">,</span>
+    <span class="n">volume_flow_rate</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mi">500</span><span class="p">,</span> <span class="s1">&#39;m ** 3 / hr&#39;</span><span class="p">),</span>
+    <span class="n">specific_pressure_drop</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mf">1.28</span><span class="p">,</span> <span class="s1">&#39;Pa / m&#39;</span><span class="p">)</span>
+<span class="p">)</span>
+
+<span class="n">ja</span><span class="o">.</span><span class="n">display_list</span><span class="p">([</span>
+    <span class="sa">f</span><span class="s2">&quot;cross-section internal diameter: &lt;b&gt;</span><span class="si">{</span><span class="n">duct</span><span class="o">.</span><span class="n">cross_section</span><span class="o">.</span><span class="n">internal_diameter</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;mm&#39;</span><span class="p">)</span><span class="si">:</span><span class="s2">~P.3f</span><span class="si">}</span><span class="s2">&lt;/b&gt;&quot;</span>
+<span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><ul><li>cross-section internal diameter: <b>200.000 mm</b></li></ul></div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ja</span><span class="o">.</span><span class="n">display_list</span><span class="p">([</span>
+    <span class="sa">f</span><span class="s2">&quot;specific pressure drop across duct: &lt;b&gt;</span><span class="si">{</span><span class="n">duct</span><span class="o">.</span><span class="n">specific_pressure_drop</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;Pa / m&#39;</span><span class="p">)</span><span class="si">:</span><span class="s2">~P.3f</span><span class="si">}</span><span class="s2">&lt;/b&gt;&quot;</span><span class="p">,</span>
+    <span class="sa">f</span><span class="s2">&quot;pressure drop across duct: &lt;b&gt;</span><span class="si">{</span><span class="n">duct</span><span class="o">.</span><span class="n">pressure_drop</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;Pa&#39;</span><span class="p">)</span><span class="si">:</span><span class="s2">~P.3f</span><span class="si">}</span><span class="s2">&lt;/b&gt;&quot;</span>
+<span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><ul><li>specific pressure drop across duct: <b>1.284 Pa/m</b></li><li>pressure drop across duct: <b>23.372 Pa</b></li></ul></div></div>
+</div>
+</section>
+<section id="replace-a-circular-duct-by-an-equivalent-rectangular-duct">
+<h3>Replace a Circular Duct by an Equivalent Rectangular Duct<a class="headerlink" href="#replace-a-circular-duct-by-an-equivalent-rectangular-duct" title="Permalink to this headline">#</a></h3>
+<p>Assume that we need to replace this circular duct by a rectangular duct while keeping the pressure drop the same. To accomplish this, we can create a rectangular cross-section of which the equivalent diameter is equal to the internal diameter of the circular duct. The height of the rectangular duct we can choose ourselves, but the width still needs to be calculated.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rect_cross_sect</span> <span class="o">=</span> <span class="n">Rectangular</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">height</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="s1">&#39;mm&#39;</span><span class="p">),</span> <span class="n">equivalent_diameter</span><span class="o">=</span><span class="n">cross_section</span><span class="o">.</span><span class="n">internal_diameter</span><span class="p">)</span>
+
+<span class="n">ja</span><span class="o">.</span><span class="n">display_list</span><span class="p">([</span>
+    <span class="sa">f</span><span class="s2">&quot;width of the equivalent rectangular duct: &lt;b&gt;</span><span class="si">{</span><span class="n">rect_cross_sect</span><span class="o">.</span><span class="n">width</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;mm&#39;</span><span class="p">)</span><span class="si">:</span><span class="s2">~P.3f</span><span class="si">}</span><span class="s2">&lt;/b&gt;&quot;</span>
+<span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><ul><li>width of the equivalent rectangular duct: <b>369.970 mm</b></li></ul></div></div>
+</div>
+<p>Let’s check if we still have the same pressure drop. Therefore, we create a rectangular duct with the same length and with the same air volume flow rate as the circular duct. When we create the rectangular duct, we don’t know the specific pressure drop nor the total pressure drop, as this is just what we are looking for. So we omit these parameters when instantiating the duct. The program will notice that the cross-section of the duct is fully determined and that the volume flow rate is given, so it deduces that it is pressure drop that needs to be calculated.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rect_duct</span> <span class="o">=</span> <span class="n">Duct</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
+    <span class="n">length</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mf">18.2</span><span class="p">,</span> <span class="s1">&#39;m&#39;</span><span class="p">),</span>
+    <span class="n">wall_roughness</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mf">0.09</span><span class="p">,</span> <span class="s1">&#39;mm&#39;</span><span class="p">),</span>
+    <span class="n">fluid</span><span class="o">=</span><span class="n">STANDARD_AIR</span><span class="p">,</span>
+    <span class="n">cross_section</span><span class="o">=</span><span class="n">rect_cross_sect</span><span class="p">,</span>
+    <span class="n">volume_flow_rate</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mi">500</span><span class="p">,</span> <span class="s1">&#39;m ** 3 / hr&#39;</span><span class="p">)</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ja</span><span class="o">.</span><span class="n">display_list</span><span class="p">([</span>
+    <span class="sa">f</span><span class="s2">&quot;specific pressure drop across duct: &lt;b&gt;</span><span class="si">{</span><span class="n">rect_duct</span><span class="o">.</span><span class="n">specific_pressure_drop</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;Pa / m&#39;</span><span class="p">)</span><span class="si">:</span><span class="s2">~P.3f</span><span class="si">}</span><span class="s2">&lt;/b&gt;&quot;</span><span class="p">,</span>
+    <span class="sa">f</span><span class="s2">&quot;pressure drop across duct: &lt;b&gt;</span><span class="si">{</span><span class="n">rect_duct</span><span class="o">.</span><span class="n">pressure_drop</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;Pa&#39;</span><span class="p">)</span><span class="si">:</span><span class="s2">~P.3f</span><span class="si">}</span><span class="s2">&lt;/b&gt;&quot;</span>
+<span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><ul><li>specific pressure drop across duct: <b>1.281 Pa/m</b></li><li>pressure drop across duct: <b>23.317 Pa</b></li></ul></div></div>
+</div>
+</section>
+</section>
+<section id="sizing-a-flat-oval-duct">
+<h2>Sizing a Flat-Oval Duct<a class="headerlink" href="#sizing-a-flat-oval-duct" title="Permalink to this headline">#</a></h2>
+<p>Sizing a flat-oval duct is similar to sizing a rectangular duct. Instead of <code class="docutils literal notranslate"><span class="pre">Rectangular</span></code> instantiate the cross-section from class <code class="docutils literal notranslate"><span class="pre">FlatOval</span></code>. The corresponding default schedule is now <code class="docutils literal notranslate"><span class="pre">flat_oval_duct_schedule</span></code>.</p>
+</section>
+<section id="adding-a-fitting-to-a-rectangular-duct">
+<h2>Adding a Fitting to a Rectangular Duct<a class="headerlink" href="#adding-a-fitting-to-a-rectangular-duct" title="Permalink to this headline">#</a></h2>
+<p>We will add a rectangular, mitered elbow to our last created rectangular duct. The loss coefficients of duct fittings are calculated based on the fitting loss coefficient tables in <strong>SMACNA’s handbook “HVAC SYSTEMS - DUCT DESIGN”, Fourth Edition (2006)</strong>. The designation of the fittings available in the program corresponds with the designation of the fitting loss tables in the handbook. The loss coefficients of rectangular mitered elbows can be found in table A-7,D of SMACNA’s handbook. For a complete overview of all the available duct fittings see the file <code class="docutils literal notranslate"><span class="pre">smacna.py</span></code> in the subpackage <code class="docutils literal notranslate"><span class="pre">fluid_flow.fittings.duct</span></code>.</p>
+<p>Adding a fitting to a duct is a two-step process. First create the fitting object, and then add it to the duct.</p>
+<p><strong>Create the Fitting</strong></p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">hvac.fluid_flow.fittings.duct</span> <span class="kn">import</span> <span class="n">ElbowA7D</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">elbow</span> <span class="o">=</span> <span class="n">ElbowA7D</span><span class="p">(</span><span class="n">ID</span><span class="o">=</span><span class="s1">&#39;elbow1&#39;</span><span class="p">,</span> <span class="n">duct</span><span class="o">=</span><span class="n">rect_duct</span><span class="p">,</span> <span class="n">theta</span><span class="o">=</span><span class="n">Q_</span><span class="p">(</span><span class="mi">90</span><span class="p">,</span> <span class="s1">&#39;deg&#39;</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Notice that we need to pass the <code class="docutils literal notranslate"><span class="pre">Duct</span></code> object, in this case <code class="docutils literal notranslate"><span class="pre">rect_duct</span></code>, to the constructor of the fitting. Fittings can be assigned an ID and may need additional parameters, such as the angle of the elbow in this example.</p>
+<p>The loss or resistance coefficient of a fitting can be retrieved through its property <code class="docutils literal notranslate"><span class="pre">zeta</span></code>. The Greek letter <em>zeta</em> (ζ) is often used in literature to designate the loss coefficient of a fitting.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ja</span><span class="o">.</span><span class="n">display_list</span><span class="p">([</span>
+    <span class="sa">f</span><span class="s2">&quot;loss coefficient of elbow: &lt;b&gt;</span><span class="si">{</span><span class="n">elbow</span><span class="o">.</span><span class="n">zeta</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&lt;/b&gt;&quot;</span>
+<span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><ul><li>loss coefficient of elbow: <b>1.488</b></li></ul></div></div>
+</div>
+<p><strong>Add the Fitting to the Duct</strong></p>
+<p>To distinguish between the different fittings in a duct, a name or ID can be assigned to a fitting. To add the fitting to the duct, we need to pass its loss coefficient and ID to the duct.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rect_duct</span><span class="o">.</span><span class="n">add_fitting</span><span class="p">(</span><span class="n">zeta</span><span class="o">=</span><span class="n">elbow</span><span class="o">.</span><span class="n">zeta</span><span class="p">,</span> <span class="n">ID</span><span class="o">=</span><span class="n">elbow</span><span class="o">.</span><span class="n">ID</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Adding fittings to a duct, will mostly increase the pressure drop across the duct caused by the air flow. After the fitting has been added to the duct, we can check its effect on the pressure drop:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ja</span><span class="o">.</span><span class="n">display_list</span><span class="p">([</span>
+    <span class="sa">f</span><span class="s2">&quot;total pressure drop along the duct: &lt;b&gt;</span><span class="si">{</span><span class="n">rect_duct</span><span class="o">.</span><span class="n">pressure_drop</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;Pa&#39;</span><span class="p">)</span><span class="si">:</span><span class="s2">~P.3f</span><span class="si">}</span><span class="s2">&lt;/b&gt;&quot;</span>
+<span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><ul><li>total pressure drop along the duct: <b>35.945 Pa</b></li></ul></div></div>
+</div>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            kernelName: "python3",
+            path: "./."
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+              </div>
+              
+            </main>
+            <footer class="footer-article noprint">
+                
+    <!-- Previous / next buttons -->
+<div class='prev-next-area'>
+    <a class='left-prev' id="prev-link" href="intro.html" title="previous page">
+        <i class="fas fa-angle-left"></i>
+        <div class="prev-next-info">
+            <p class="prev-next-subtitle">previous</p>
+            <p class="prev-next-title">Pipe and Duct Flow Calculations with Python</p>
+        </div>
+    </a>
+    <a class='right-next' id="next-link" href="closed_pipe_network_design.html" title="next page">
+    <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Design of a Hydronic Pipe Network</p>
+    </div>
+    <i class="fas fa-angle-right"></i>
+    </a>
+</div>
+            </footer>
+        </div>
+    </div>
+    <div class="footer-content row">
+        <footer class="col footer"><p>
+  
+    By Tom Christiaens<br/>
+  
+      &copy; Copyright 2022.<br/>
+</p>
+        </footer>
+    </div>
+    
+</div>
+
+
+      </div>
+    </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+
+
+  </body>
+</html>
